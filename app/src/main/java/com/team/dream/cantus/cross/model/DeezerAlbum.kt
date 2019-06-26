@@ -6,4 +6,5 @@ data class DeezerAlbum(
     val cover_medium: String,
     val nb_tracks: Int,
     val tracklist: String,
-    val artist: Int)
+    val artistId: Int,
+    val artistName: String)

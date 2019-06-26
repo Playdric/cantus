@@ -15,7 +15,8 @@ class ApiAlbumResponseMapper {
                 it.coverMedium,
                 it.nbTracks,
                 it.tracklist,
-                it.artist.id
+                it.artist.id,
+                it.artist.name
             )
         }
     }

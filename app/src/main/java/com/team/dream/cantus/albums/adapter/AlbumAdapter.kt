@@ -1,12 +1,11 @@
 package com.team.dream.cantus.albums.adapter
 
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import androidx.appcompat.view.menu.ActionMenuItemView
-import androidx.appcompat.view.menu.MenuView
+import androidx.appcompat.widget.AppCompatImageView
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import com.team.dream.cantus.R
@@ -31,13 +30,18 @@ class AlbumAdapter: RecyclerView.Adapter<AlbumAdapter.AlbumViewHolder>() {
 
     override fun onBindViewHolder(holder: AlbumViewHolder, position: Int) {
         albumList?.let { albums ->
-            val coverUrl = albums[position].cover_medium
 
-            Picasso.get().load(coverUrl).into(holder.imvCover)
+            Picasso.get().load(albums[position].cover_medium).into(holder.imvCover)
+
+            holder.txvAlbumName.text = albums[position].title
+            holder.txvArtistName.text = albums[position].artistName
+
         }
     }
 
     class AlbumViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
-        val imvCover: ImageView = itemView.findViewById(R.id.imv_cover)
+        val imvCover: AppCompatImageView = itemView.findViewById(R.id.item_album_imv_cover)
+        val txvAlbumName: AppCompatTextView = itemView.findViewById(R.id.item_album_txv_name)
+        val txvArtistName: AppCompatTextView = itemView.findViewById(R.id.item_album_txv_artist)
     }
 }
