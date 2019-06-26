@@ -31,7 +31,7 @@ class AlbumFragment : Fragment() {
         }
         adapter = AlbumAdapter()
         rcvAlbums.adapter = adapter
-        rcvAlbums.layoutManager = GridLayoutManager(context, 2)
+        rcvAlbums.layoutManager = GridLayoutManager(context, 3)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

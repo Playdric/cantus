@@ -13,7 +13,8 @@ class ApiAlbumMapper {
                 coverMedium,
                 nbTracks,
                 tracklist,
-                artist.id
+                artist.id,
+                artist.name
             )
         }
     }
