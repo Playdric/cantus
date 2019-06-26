@@ -6,6 +6,16 @@
         <item name="colorPrimary">@color/primaryColor</item>
         <item name="colorPrimaryDark">@color/primaryDarkColor</item>
         <item name="colorAccent">@color/secondaryColor</item>
+        <item name="android:textViewStyle">@style/BitterTextViewStyle</item>
+        <item name="android:buttonStyle">@style/BitterButtonStyle</item>
+    </style>
+
+    <style name="BitterTextViewStyle" parent="android:Widget.TextView">
+        <item name="android:fontFamily">@font/bitter_regular</item>
+    </style>
+
+    <style name="BitterButtonStyle" parent="android:Widget.Holo.Button">
+        <item name="android:fontFamily">@font/bitter_regular</item>
     </style>
 
 </resources>

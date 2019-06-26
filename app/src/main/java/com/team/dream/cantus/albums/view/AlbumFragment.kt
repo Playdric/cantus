@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.team.dream.cantus.R
@@ -29,9 +30,7 @@ class AlbumFragment : Fragment() {
         with(view) {
             rcvAlbums = findViewById(R.id.rcv_albums)
         }
-        adapter = AlbumAdapter()
-        rcvAlbums.adapter = adapter
-        rcvAlbums.layoutManager = GridLayoutManager(context, 3)
+        initRecyclerView()
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -47,6 +46,21 @@ class AlbumFragment : Fragment() {
 
     private fun updateAlbumList(albums: List<DeezerAlbum>) {
         adapter.albumList = albums
+    }
+
+    private fun initRecyclerView() {
+        adapter = AlbumAdapter()
+        rcvAlbums.adapter = adapter
+        rcvAlbums.layoutManager = GridLayoutManager(context, 3)
+        adapter.setListener(object: AlbumAdapter.ClickListener{
+            override fun onClick(album: DeezerAlbum) {
+                view?.also {
+                    val actionDetail = AlbumFragmentDirections.actionAlbumFragmentToTracklistFragment(album.id)
+                    Navigation.findNavController(it).navigate(actionDetail)
+                }
+            }
+
+        })
     }
 
 

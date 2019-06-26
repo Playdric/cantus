@@ -1,6 +1,5 @@
 package com.team.dream.cantus.cross.dto.mapper
 
-import com.team.dream.cantus.cross.dto.ApiAlbum
 import com.team.dream.cantus.cross.dto.ApiAlbumResponse
 import com.team.dream.cantus.cross.model.DeezerAlbum
 

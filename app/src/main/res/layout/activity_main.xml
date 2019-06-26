@@ -7,14 +7,18 @@
         android:layout_height="match_parent"
         tools:context=".MainActivity">
 
-    <FrameLayout
+    <fragment
             android:id="@+id/fragment_container"
+            android:name="androidx.navigation.fragment.NavHostFragment"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            app:defaultNavHost="true"
+            app:navGraph="@navigation/nav_graph"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/imv_album"/>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/txt_album_title"/>
+
 
     <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/imv_album"
