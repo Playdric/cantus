@@ -5,11 +5,14 @@ import com.team.dream.cantus.cross.dto.ApiTrackResponse
 import kotlinx.coroutines.Deferred
 import retrofit2.http.GET
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface DeezerService {
 
     @GET("user/2529/albums")
     fun getAlbumsAsync(
+        @Query("index")
+        index: Int
     ): Deferred<ApiAlbumResponse>
 
     @GET("/album/{id}/tracks")

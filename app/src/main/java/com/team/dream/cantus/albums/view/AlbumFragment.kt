@@ -20,6 +20,8 @@ class AlbumFragment : Fragment() {
     private lateinit var viewModel: AlbumViewModel
     private lateinit var rcvAlbums: RecyclerView
     private lateinit var adapter: AlbumAdapter
+    private var isLoading = false
+    private var currentIndex = 0
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_album, container, false)
@@ -41,17 +43,36 @@ class AlbumFragment : Fragment() {
             updateAlbumList(it)
         })
 
-        viewModel.getAlbums()
+        if (currentIndex == 0) {
+            viewModel.getAlbums(currentIndex)
+            currentIndex += 25
+        }
     }
 
     private fun updateAlbumList(albums: List<DeezerAlbum>) {
-        adapter.albumList = albums
+        isLoading = false
+        if (adapter.albumList!!.isNotEmpty()) {
+            val index = adapter.albumList!!.size - 1
+            adapter.albumList!!.removeAt(index)
+            adapter.notifyItemRemoved(index)
+        }
+        adapter.albumList = albums.toMutableList()
     }
 
     private fun initRecyclerView() {
         adapter = AlbumAdapter()
         rcvAlbums.adapter = adapter
-        rcvAlbums.layoutManager = GridLayoutManager(context, 3)
+        val layoutManager = GridLayoutManager(context, 3)
+        layoutManager.spanSizeLookup = object: GridLayoutManager.SpanSizeLookup(){
+            override fun getSpanSize(position: Int): Int {
+                return when (adapter.getItemViewType(position)) {
+                    AlbumAdapter.VIEW_TYPE_LOADING -> 3
+                    else -> 1
+                }
+            }
+
+        }
+        rcvAlbums.layoutManager = layoutManager
         adapter.setListener(object: AlbumAdapter.ClickListener{
             override fun onClick(album: DeezerAlbum) {
                 view?.also {
@@ -61,6 +82,29 @@ class AlbumFragment : Fragment() {
             }
 
         })
+
+        rcvAlbums.addOnScrollListener(object: RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                val gridLayoutManager = recyclerView.layoutManager as GridLayoutManager
+
+                if (!isLoading) {
+                    val lastItem = gridLayoutManager.findLastCompletelyVisibleItemPosition()
+                    if (lastItem == adapter.albumList!!.size - 1) {
+                        loadMore()
+                    }
+
+                }
+            }
+        })
+    }
+
+    private fun loadMore(){
+        adapter.albumList!!.add(null)
+        adapter.notifyItemInserted(adapter.albumList!!.size -1)
+        isLoading = true
+        viewModel.getAlbums(currentIndex)
+        currentIndex += 25
     }
 
 
