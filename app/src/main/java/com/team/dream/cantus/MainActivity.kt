@@ -16,11 +16,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun showFragment(fragment: Fragment) {
         val fragmentManager= supportFragmentManager
-        val fragmentTransaction = fragmentManager.beginTransaction()
-
-        fragmentTransaction.replace(R.id.fragment_container, fragment)
-        fragmentTransaction.addToBackStack(null)
-        fragmentTransaction.commit()
+//        val fragmentTransaction = fragmentManager.beginTransaction()
+//
+//        fragmentTransaction.replace(R.id.fragment_container, fragment)
+//        fragmentTransaction.addToBackStack(null)
+//        fragmentTransaction.commit()
 
     }
 }

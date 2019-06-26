@@ -1,0 +1,136 @@
+package com.team.dream.cantus.cross.dto
+
+
+import com.squareup.moshi.Json
+
+data class ApiTrack(
+    @field:Json(name = "album")
+    val album: Album,
+    @field:Json(name = "artist")
+    val artist: Artist,
+    @field:Json(name = "available_countries")
+    val availableCountries: List<Any>,
+    @field:Json(name = "bpm")
+    val bpm: Int,
+    @field:Json(name = "contributors")
+    val contributors: List<Contributor>,
+    @field:Json(name = "disk_number")
+    val diskNumber: Int,
+    @field:Json(name = "duration")
+    val duration: Int,
+    @field:Json(name = "explicit_content_cover")
+    val explicitContentCover: Int,
+    @field:Json(name = "explicit_content_lyrics")
+    val explicitContentLyrics: Int,
+    @field:Json(name = "explicit_lyrics")
+    val explicitLyrics: Boolean,
+    @field:Json(name = "gain")
+    val gain: Double,
+    @field:Json(name = "id")
+    val id: Int,
+    @field:Json(name = "isrc")
+    val isrc: String,
+    @field:Json(name = "link")
+    val link: String,
+    @field:Json(name = "preview")
+    val preview: String,
+    @field:Json(name = "rank")
+    val rank: Int,
+    @field:Json(name = "readable")
+    val readable: Boolean,
+    @field:Json(name = "release_date")
+    val releaseDate: String,
+    @field:Json(name = "share")
+    val share: String,
+    @field:Json(name = "title")
+    val title: String,
+    @field:Json(name = "title_short")
+    val titleShort: String,
+    @field:Json(name = "title_version")
+    val titleVersion: String,
+    @field:Json(name = "track_position")
+    val trackPosition: Int,
+    @field:Json(name = "type")
+    val type: String
+) {
+    data class Album(
+        @field:Json(name = "cover")
+        val cover: String,
+        @field:Json(name = "cover_big")
+        val coverBig: String,
+        @field:Json(name = "cover_medium")
+        val coverMedium: String,
+        @field:Json(name = "cover_small")
+        val coverSmall: String,
+        @field:Json(name = "cover_xl")
+        val coverXl: String,
+        @field:Json(name = "id")
+        val id: Int,
+        @field:Json(name = "link")
+        val link: String,
+        @field:Json(name = "release_date")
+        val releaseDate: String,
+        @field:Json(name = "title")
+        val title: String,
+        @field:Json(name = "tracklist")
+        val tracklist: String,
+        @field:Json(name = "type")
+        val type: String
+    )
+
+    data class Contributor(
+        @field:Json(name = "id")
+        val id: Int,
+        @field:Json(name = "link")
+        val link: String,
+        @field:Json(name = "name")
+        val name: String,
+        @field:Json(name = "picture")
+        val picture: String,
+        @field:Json(name = "picture_big")
+        val pictureBig: String,
+        @field:Json(name = "picture_medium")
+        val pictureMedium: String,
+        @field:Json(name = "picture_small")
+        val pictureSmall: String,
+        @field:Json(name = "picture_xl")
+        val pictureXl: String,
+        @field:Json(name = "radio")
+        val radio: Boolean,
+        @field:Json(name = "role")
+        val role: String,
+        @field:Json(name = "share")
+        val share: String,
+        @field:Json(name = "tracklist")
+        val tracklist: String,
+        @field:Json(name = "type")
+        val type: String
+    )
+
+    data class Artist(
+        @field:Json(name = "id")
+        val id: Int,
+        @field:Json(name = "link")
+        val link: String,
+        @field:Json(name = "name")
+        val name: String,
+        @field:Json(name = "picture")
+        val picture: String,
+        @field:Json(name = "picture_big")
+        val pictureBig: String,
+        @field:Json(name = "picture_medium")
+        val pictureMedium: String,
+        @field:Json(name = "picture_small")
+        val pictureSmall: String,
+        @field:Json(name = "picture_xl")
+        val pictureXl: String,
+        @field:Json(name = "radio")
+        val radio: Boolean,
+        @field:Json(name = "share")
+        val share: String,
+        @field:Json(name = "tracklist")
+        val tracklist: String,
+        @field:Json(name = "type")
+        val type: String
+    )
+}
