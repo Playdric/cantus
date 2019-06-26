@@ -1,6 +1,5 @@
 package com.team.dream.cantus.cross.com
 
-import android.util.Log
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.team.dream.cantus.cross.dto.ApiAlbumResponse
 import com.team.dream.cantus.cross.dto.ApiTrackResponse
@@ -8,7 +7,10 @@ import com.team.dream.cantus.cross.dto.mapper.ApiAlbumResponseMapper
 import com.team.dream.cantus.cross.dto.mapper.ApiTrackResponseMapper
 import com.team.dream.cantus.cross.model.DeezerAlbum
 import com.team.dream.cantus.cross.model.DeezerTrack
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -37,11 +39,11 @@ object DeezerProvider {
     }
 
 
-    fun getAlbums(listener: Listener<List<DeezerAlbum>>) {
+    fun getAlbums(index: Int, listener: Listener<List<DeezerAlbum>>) {
         CoroutineScope(Dispatchers.IO).launch {
             val result: ApiAlbumResponse
             try {
-                result = service.getAlbumsAsync().await()
+                result = service.getAlbumsAsync(index).await()
                 withContext(Dispatchers.Main) {
                     listener.onSuccess(ApiAlbumResponseMapper().map(result))
                 }
