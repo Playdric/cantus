@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.airbnb.lottie.LottieAnimationView
 import com.team.dream.cantus.R
 import com.team.dream.cantus.albums.adapter.AlbumAdapter
 import com.team.dream.cantus.albums.viewmodel.AlbumViewModel
@@ -19,7 +20,8 @@ class AlbumFragment : Fragment() {
 
     private lateinit var viewModel: AlbumViewModel
     private lateinit var rcvAlbums: RecyclerView
-    private lateinit var adapter: AlbumAdapter
+    private lateinit var lottieAnimation: LottieAnimationView
+    private var adapter = AlbumAdapter()
     private var isLoading = false
     private var currentIndex = 0
 
@@ -31,6 +33,7 @@ class AlbumFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         with(view) {
             rcvAlbums = findViewById(R.id.rcv_albums)
+            lottieAnimation = findViewById(R.id.album_animation)
         }
         initRecyclerView()
     }
@@ -40,27 +43,26 @@ class AlbumFragment : Fragment() {
         viewModel = ViewModelProviders.of(this).get(AlbumViewModel::class.java)
 
         viewModel.albumsLiveData.observe(viewLifecycleOwner, Observer {
-            updateAlbumList(it)
+            lottieAnimation.visibility = View.GONE
+            lottieAnimation.cancelAnimation()
+            isLoading = false
+            if (!it.isNullOrEmpty()) {
+                updateAlbumList(it)
+            }
         })
 
         if (currentIndex == 0) {
+            isLoading = true
             viewModel.getAlbums(currentIndex)
             currentIndex += 25
         }
     }
 
     private fun updateAlbumList(albums: List<DeezerAlbum>) {
-        isLoading = false
-        if (adapter.albumList!!.isNotEmpty()) {
-            val index = adapter.albumList!!.size - 1
-            adapter.albumList!!.removeAt(index)
-            adapter.notifyItemRemoved(index)
-        }
         adapter.albumList = albums.toMutableList()
     }
 
     private fun initRecyclerView() {
-        adapter = AlbumAdapter()
         rcvAlbums.adapter = adapter
         val layoutManager = GridLayoutManager(context, 3)
         layoutManager.spanSizeLookup = object: GridLayoutManager.SpanSizeLookup(){
@@ -91,20 +93,13 @@ class AlbumFragment : Fragment() {
                 if (!isLoading) {
                     val lastItem = gridLayoutManager.findLastCompletelyVisibleItemPosition()
                     if (lastItem == adapter.albumList!!.size - 1) {
-                        loadMore()
+                        viewModel.getAlbums(currentIndex)
+                        currentIndex += 25
                     }
 
                 }
             }
         })
-    }
-
-    private fun loadMore(){
-        adapter.albumList!!.add(null)
-        adapter.notifyItemInserted(adapter.albumList!!.size -1)
-        isLoading = true
-        viewModel.getAlbums(currentIndex)
-        currentIndex += 25
     }
 
 

@@ -53,7 +53,7 @@ class TracklistFragment: Fragment() {
         rcvTracklist.layoutManager = LinearLayoutManager(context)
         adapter.setListener(object: TracklistAdapter.ClickListener {
             override fun onClick(track: DeezerTrack) {
-               TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+               //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
             }
 
         })

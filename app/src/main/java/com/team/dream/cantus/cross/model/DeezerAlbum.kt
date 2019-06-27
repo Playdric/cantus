@@ -7,4 +7,9 @@ data class DeezerAlbum(
     val nb_tracks: Int,
     val tracklist: String,
     val artistId: Int,
-    val artistName: String)
+    val artistName: String) {
+
+    override fun toString(): String {
+        return title
+    }
+}
