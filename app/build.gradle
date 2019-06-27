@@ -55,6 +55,8 @@ dependencies {
     //Picasso
     implementation 'com.squareup.picasso:picasso:2.71828'
 
+    implementation 'com.airbnb.android:lottie:3.0.7'
+
     implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
 
     implementation "androidx.navigation:navigation-fragment:$navigation_version"
