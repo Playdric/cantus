@@ -44,7 +44,7 @@ class TracklistFragment: Fragment() {
             updateAlbumList(it)
         })
 
-        viewModel.getTracklist(args.albumId)
+        viewModel.getTracklist(args.album.id)
     }
 
     private fun initRecyclerView() {
