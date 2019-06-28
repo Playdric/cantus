@@ -69,11 +69,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toTopOf="@id/rcv_tracklist">
-            <CustomAttribute
-                    motion:attributeName="backgroundColor"
-                    motion:customColorValue="@color/tracklistUncollapsedToolbar" />
-        </Constraint>
+                app:layout_constraintBottom_toTopOf="@id/rcv_tracklist"/>
     </ConstraintSet>
 
     <ConstraintSet android:id="@+id/end">

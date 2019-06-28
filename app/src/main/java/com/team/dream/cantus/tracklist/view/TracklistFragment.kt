@@ -1,16 +1,21 @@
 package com.team.dream.cantus.tracklist.view
 
+import android.graphics.drawable.BitmapDrawable
+import android.os.Build
 import android.os.Bundle
 import android.transition.TransitionInflater
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.navArgs
+import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
@@ -18,6 +23,7 @@ import com.team.dream.cantus.R
 import com.team.dream.cantus.cross.model.DeezerTrack
 import com.team.dream.cantus.tracklist.adapter.TracklistAdapter
 import com.team.dream.cantus.tracklist.viewmodel.TracklistViewModel
+import java.lang.Exception
 
 class TracklistFragment: Fragment() {
 
@@ -27,6 +33,8 @@ class TracklistFragment: Fragment() {
     private lateinit var txvAlbumName: AppCompatTextView
     private lateinit var txvArtist: AppCompatTextView
     private lateinit var txvNbTrack: AppCompatTextView
+    private lateinit var toolbarBackground: View
+    private lateinit var motionLayout: MotionLayout
     private lateinit var adapter: TracklistAdapter
 
     private val args by navArgs<TracklistFragmentArgs>()
@@ -48,6 +56,8 @@ class TracklistFragment: Fragment() {
             txvAlbumName = findViewById(R.id.tracklist_txv_title)
             txvArtist = findViewById(R.id.tracklist_txv_artist)
             txvNbTrack = findViewById(R.id.tracklist_txv_nb_tracks)
+            toolbarBackground = findViewById(R.id.tracklist_toolbar_background)
+            motionLayout = findViewById(R.id.tracklist_motion_layout)
         }
         initRecyclerView()
         with(args.album) {
@@ -55,7 +65,27 @@ class TracklistFragment: Fragment() {
                 .get()
                 .load(cover_medium)
                 .placeholder(R.drawable.ic_album_placeholder)
-                .into(imvAlbumCover)
+                .into(imvAlbumCover, object: com.squareup.picasso.Callback {
+                    override fun onSuccess() {
+                        val bmpDrawable = imvAlbumCover.drawable as BitmapDrawable
+                        Palette.from(bmpDrawable.bitmap).generate {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                it?.let {palette ->
+                                    val color = palette.getLightVibrantColor(resources.getColor(R.color.tracklistUncollapsedToolbar, null))
+                                    toolbarBackground.setBackgroundColor(color)
+                                    motionLayout.getConstraintSet(R.id.start)?.let { startConstraintSet ->
+                                        startConstraintSet.setColorValue(R.id.tracklist_toolbar_background, "BackgroundColor", color)
+                                        // You can set the width and height here as well
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    override fun onError(e: Exception?) {
+                    }
+
+                })
             txvAlbumName.text = title
             txvArtist.text = artistName
             txvNbTrack.text = resources.getQuantityString(R.plurals.track_number, nb_tracks, nb_tracks)
