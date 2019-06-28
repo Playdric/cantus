@@ -1,10 +1,13 @@
 package com.team.dream.cantus.cross.rx
 
+import com.team.dream.cantus.cross.model.DeezerAlbum
+import com.team.dream.cantus.cross.model.DeezerTrack
+
 class RxEvent {
 
     // ex for here :
     // data class EventAddPerson(val personName: String)
-
+    data class EventTrackSelection(val album: DeezerAlbum, val tracks: List<DeezerTrack>, val selectedTrack: DeezerTrack)
 
     // publish example :
     // RxBus.publish(RxEvent.EventAddPerson(etPersonName.text.toString()))

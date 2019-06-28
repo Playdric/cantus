@@ -21,6 +21,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import com.team.dream.cantus.R
 import com.team.dream.cantus.cross.model.DeezerTrack
+import com.team.dream.cantus.cross.rx.RxBus
+import com.team.dream.cantus.cross.rx.RxEvent
 import com.team.dream.cantus.tracklist.adapter.TracklistAdapter
 import com.team.dream.cantus.tracklist.viewmodel.TracklistViewModel
 import java.lang.Exception
@@ -110,7 +112,9 @@ class TracklistFragment: Fragment() {
         rcvTracklist.layoutManager = LinearLayoutManager(context)
         adapter.setListener(object: TracklistAdapter.ClickListener {
             override fun onClick(track: DeezerTrack) {
-               //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                adapter.tracks?.run {
+                    RxBus.publish(RxEvent.EventTrackSelection(args.album, this, track))
+                }
             }
 
         })
