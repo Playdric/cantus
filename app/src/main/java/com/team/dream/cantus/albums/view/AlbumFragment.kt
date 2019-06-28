@@ -4,10 +4,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.NavDestination
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.FragmentNavigatorExtras
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.airbnb.lottie.LottieAnimationView
@@ -15,6 +19,7 @@ import com.team.dream.cantus.R
 import com.team.dream.cantus.albums.adapter.AlbumAdapter
 import com.team.dream.cantus.albums.viewmodel.AlbumViewModel
 import com.team.dream.cantus.cross.model.DeezerAlbum
+import kotlinx.android.synthetic.main.activity_main.view.*
 
 class AlbumFragment : Fragment() {
 
@@ -64,6 +69,14 @@ class AlbumFragment : Fragment() {
 
     private fun initRecyclerView() {
         rcvAlbums.adapter = adapter
+        rcvAlbums.apply {
+            postponeEnterTransition()
+            viewTreeObserver
+                .addOnPreDrawListener {
+                    startPostponedEnterTransition()
+                    true
+                }
+        }
         val layoutManager = GridLayoutManager(context, 3)
         layoutManager.spanSizeLookup = object: GridLayoutManager.SpanSizeLookup(){
             override fun getSpanSize(position: Int): Int {
@@ -76,10 +89,13 @@ class AlbumFragment : Fragment() {
         }
         rcvAlbums.layoutManager = layoutManager
         adapter.setListener(object: AlbumAdapter.ClickListener{
-            override fun onClick(album: DeezerAlbum) {
+            override fun onClick(album: DeezerAlbum, position: Int, imageView: AppCompatImageView) {
                 view?.also {
+                    val extras = FragmentNavigatorExtras(
+                        it.findViewById<AppCompatImageView>(R.id.item_album_imv_cover) to "album_cover"
+                    )
                     val actionDetail = AlbumFragmentDirections.actionAlbumFragmentToTracklistFragment(album)
-                    Navigation.findNavController(it).navigate(actionDetail)
+                    Navigation.findNavController(it).navigate(actionDetail, extras)
                 }
             }
 

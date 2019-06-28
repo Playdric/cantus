@@ -1,11 +1,11 @@
 package com.team.dream.cantus.albums.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import com.team.dream.cantus.R
@@ -69,7 +69,9 @@ class AlbumAdapter : RecyclerView.Adapter<AlbumAdapter.AlbumViewHolder>() {
 
                 holder.txvAlbumName.text = albums[position]!!.title
                 holder.txvArtistName.text = albums[position]!!.artistName
-                holder.itemView.setOnClickListener { listener?.onClick(albums[position]!!) }
+                holder.itemView.setOnClickListener { listener?.onClick(albums[position]!!, position, holder.imvCover) }
+
+                ViewCompat.setTransitionName(holder.imvCover, "${albums[position]!!.id}")
             }
 
         }
@@ -94,6 +96,6 @@ class AlbumAdapter : RecyclerView.Adapter<AlbumAdapter.AlbumViewHolder>() {
     class AlbumLoadingViewHolder(itemView: View): AlbumViewHolder(itemView)
 
     interface ClickListener {
-        fun onClick(album: DeezerAlbum)
+        fun onClick(album: DeezerAlbum, position: Int, imageView: AppCompatImageView)
     }
 }

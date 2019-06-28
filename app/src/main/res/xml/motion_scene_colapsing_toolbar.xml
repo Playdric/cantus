@@ -18,7 +18,7 @@
     <ConstraintSet android:id="@+id/start">
         <Constraint
                 android:id="@+id/tracklist_imv_album"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_constraintBottom_toTopOf="@id/tracklist_txv_title"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -79,22 +79,22 @@
     <ConstraintSet android:id="@+id/end">
         <Constraint
                 android:id="@+id/tracklist_imv_album"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:alpha="0"
                 android:translationX="0dp"
                 android:translationY="-50dp"
-                app:layout_constraintBottom_toTopOf="@id/tracklist_txv_title"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
+                app:layout_constraintStart_toStartOf="parent"/>
 
         <Constraint
                 android:id="@+id/tracklist_txv_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:scaleX="1"
-                android:scaleY="1"
+                android:scaleX="1.3"
+                android:scaleY="1.3"
                 android:translationX="20dp"
                 app:layout_constraintBottom_toTopOf="@id/tracklist_txv_artist"
                 app:layout_constraintStart_toStartOf="parent"
@@ -131,7 +131,7 @@
                 android:alpha="0"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tracklist_txv_artist"/>
+                app:layout_constraintTop_toBottomOf="@id/tracklist_txv_title"/>
 
         <Constraint
                 android:id="@+id/tracklist_toolbar_background"

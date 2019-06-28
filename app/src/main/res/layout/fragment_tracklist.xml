@@ -23,9 +23,10 @@
 
     <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/tracklist_imv_album"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/margin_medium"
+            android:transitionName="album_cover"
             android:paddingTop="@dimen/margin_medium"
             app:layout_constraintBottom_toTopOf="@id/tracklist_txv_title"
             app:layout_constraintEnd_toEndOf="parent"
@@ -38,7 +39,7 @@
             android:id="@+id/tracklist_txv_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="@dimen/margin_medium"
+            android:padding="@dimen/margin_xlarge"
             app:layout_constraintBottom_toTopOf="@id/tracklist_txv_artist"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
