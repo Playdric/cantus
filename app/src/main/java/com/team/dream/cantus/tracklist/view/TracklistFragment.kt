@@ -1,28 +1,40 @@
 package com.team.dream.cantus.tracklist.view
 
 import android.os.Bundle
+import android.transition.TransitionInflater
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.AppCompatImageView
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.navArgs
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.squareup.picasso.Picasso
 import com.team.dream.cantus.R
-import com.team.dream.cantus.tracklist.viewmodel.TracklistViewModel
 import com.team.dream.cantus.cross.model.DeezerTrack
 import com.team.dream.cantus.tracklist.adapter.TracklistAdapter
+import com.team.dream.cantus.tracklist.viewmodel.TracklistViewModel
 
 class TracklistFragment: Fragment() {
 
     private lateinit var viewModel: TracklistViewModel
     private lateinit var rcvTracklist: RecyclerView
+    private lateinit var imvAlbumCover: AppCompatImageView
+    private lateinit var txvAlbumName: AppCompatTextView
+    private lateinit var txvArtist: AppCompatTextView
+    private lateinit var txvNbTrack: AppCompatTextView
     private lateinit var adapter: TracklistAdapter
 
     private val args by navArgs<TracklistFragmentArgs>()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        sharedElementEnterTransition = TransitionInflater.from(context).inflateTransition(android.R.transition.move)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_tracklist, container, false)
@@ -32,8 +44,23 @@ class TracklistFragment: Fragment() {
         super.onViewCreated(view, savedInstanceState)
         with(view) {
             rcvTracklist = findViewById(R.id.rcv_tracklist)
+            imvAlbumCover = findViewById(R.id.tracklist_imv_album)
+            txvAlbumName = findViewById(R.id.tracklist_txv_title)
+            txvArtist = findViewById(R.id.tracklist_txv_artist)
+            txvNbTrack = findViewById(R.id.tracklist_txv_nb_tracks)
         }
         initRecyclerView()
+        with(args.album) {
+            Picasso
+                .get()
+                .load(cover_medium)
+                .placeholder(R.drawable.ic_album_placeholder)
+                .into(imvAlbumCover)
+            txvAlbumName.text = title
+            txvArtist.text = artistName
+            txvNbTrack.text = resources.getQuantityString(R.plurals.track_number, nb_tracks, nb_tracks)
+
+        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

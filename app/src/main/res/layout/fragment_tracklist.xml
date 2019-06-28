@@ -1,14 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<androidx.constraintlayout.motion.widget.MotionLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="vertical"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/tracklist_motion_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/fragmentBackgroundColor">
+        android:background="@color/fragmentBackgroundColor"
+        android:orientation="vertical"
+        app:layoutDescription="@xml/motion_scene_colapsing_toolbar">
+
+    <View
+            android:id="@+id/tracklist_toolbar_background"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@color/tracklistUncollapsedToolbar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/rcv_tracklist"/>
+
+
+    <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/tracklist_imv_album"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_medium"
+            android:transitionName="album_cover"
+            android:paddingTop="@dimen/margin_medium"
+            app:layout_constraintBottom_toTopOf="@id/tracklist_txv_title"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:src="@drawable/ic_music_note"
+            tools:src="@tools:sample/avatars"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tracklist_txv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/margin_xlarge"
+            app:layout_constraintBottom_toTopOf="@id/tracklist_txv_artist"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tracklist_imv_album"
+            android:text="Le Nom de l'Album"
+            tools:text="Le Nom de l'Album"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tracklist_txv_artist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/margin_medium"
+            app:layout_constraintEnd_toStartOf="@id/tracklist_txv_nb_tracks"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tracklist_txv_title"
+            android:text="Le Nom de l'Artiste"
+            tools:text="Le Nom de l'Artiste"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tracklist_txv_nb_tracks"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/margin_medium"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tracklist_txv_artist"
+            app:layout_constraintTop_toBottomOf="@id/tracklist_txv_title"
+            android:text="pistes : 12"
+            tools:text="pistes : 12"/>
+
+    <View
+            android:id="@+id/tracklist_separator"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/separatorColor"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tracklist_txv_artist"/>
 
     <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rcv_tracklist"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tracklist_separator"
+            tools:listitem="@layout/item_track"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.motion.widget.MotionLayout>
