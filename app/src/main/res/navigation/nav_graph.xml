@@ -11,6 +11,6 @@
     </fragment>
     <fragment android:id="@+id/tracklistFragment" android:name="com.team.dream.cantus.tracklist.view.TracklistFragment"
               android:label="TracklistFragment">
-        <argument android:name="albumId" app:argType="integer"/>
+        <argument android:name="album" app:argType="com.team.dream.cantus.cross.model.DeezerAlbum"/>
     </fragment>
 </navigation>

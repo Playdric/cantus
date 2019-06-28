@@ -78,7 +78,7 @@ class AlbumFragment : Fragment() {
         adapter.setListener(object: AlbumAdapter.ClickListener{
             override fun onClick(album: DeezerAlbum) {
                 view?.also {
-                    val actionDetail = AlbumFragmentDirections.actionAlbumFragmentToTracklistFragment(album.id)
+                    val actionDetail = AlbumFragmentDirections.actionAlbumFragmentToTracklistFragment(album)
                     Navigation.findNavController(it).navigate(actionDetail)
                 }
             }
