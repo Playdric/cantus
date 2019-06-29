@@ -89,10 +89,10 @@ class AlbumFragment : Fragment() {
         }
         rcvAlbums.layoutManager = layoutManager
         adapter.setListener(object: AlbumAdapter.ClickListener{
-            override fun onClick(album: DeezerAlbum, position: Int, imageView: AppCompatImageView) {
+            override fun onClick(album: DeezerAlbum, imageView: AppCompatImageView) {
                 view?.also {
                     val extras = FragmentNavigatorExtras(
-                        it.findViewById<AppCompatImageView>(R.id.item_album_imv_cover) to "album_cover"
+                        imageView to "album_cover"
                     )
                     val actionDetail = AlbumFragmentDirections.actionAlbumFragmentToTracklistFragment(album)
                     Navigation.findNavController(it).navigate(actionDetail, extras)

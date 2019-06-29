@@ -69,7 +69,7 @@ class AlbumAdapter : RecyclerView.Adapter<AlbumAdapter.AlbumViewHolder>() {
 
                 holder.txvAlbumName.text = albums[position]!!.title
                 holder.txvArtistName.text = albums[position]!!.artistName
-                holder.itemView.setOnClickListener { listener?.onClick(albums[position]!!, position, holder.imvCover) }
+                holder.itemView.setOnClickListener { listener?.onClick(albums[position]!!, holder.imvCover) }
 
                 ViewCompat.setTransitionName(holder.imvCover, "${albums[position]!!.id}")
             }
@@ -96,6 +96,6 @@ class AlbumAdapter : RecyclerView.Adapter<AlbumAdapter.AlbumViewHolder>() {
     class AlbumLoadingViewHolder(itemView: View): AlbumViewHolder(itemView)
 
     interface ClickListener {
-        fun onClick(album: DeezerAlbum, position: Int, imageView: AppCompatImageView)
+        fun onClick(album: DeezerAlbum, imageView: AppCompatImageView)
     }
 }
