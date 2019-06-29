@@ -1,4 +1,4 @@
-package com.team.dream.cantus.player.player.viewmodel
+package com.team.dream.cantus.player.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -15,7 +15,7 @@ class PlayerViewModel: ViewModel() {
     val albumLiveData: LiveData<DeezerAlbum> = albumMutableLiveData
     val trackLiveData: LiveData<DeezerTrack> = trackMutableLiveData
 
-    private lateinit var disposable: Disposable
+    private var disposable: Disposable
     private var currentAlbumTracks: List<DeezerTrack>? = null
 
     init {
@@ -48,5 +48,9 @@ class PlayerViewModel: ViewModel() {
 
             trackMutableLiveData.value = this[--index]
         }
+    }
+
+    fun onDestroy() {
+        disposable.dispose()
     }
 }

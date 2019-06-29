@@ -1,17 +1,15 @@
 package com.team.dream.cantus
 
 import android.media.MediaPlayer
+import android.media.session.MediaSession
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.squareup.picasso.Picasso
-import com.team.dream.cantus.albums.view.AlbumFragment
 import com.team.dream.cantus.cross.model.DeezerAlbum
 import com.team.dream.cantus.cross.model.DeezerTrack
-import com.team.dream.cantus.player.player.viewmodel.PlayerViewModel
+import com.team.dream.cantus.player.viewmodel.PlayerViewModel
 import kotlinx.android.synthetic.main.activity_main.*
-import android.media.session.MediaSession
 
 
 class MainActivity : AppCompatActivity() {
@@ -24,8 +22,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        showFragment(AlbumFragment())
         viewModel.albumLiveData.observe(this, Observer {
             updateAlbum(it)
         })
@@ -33,6 +29,11 @@ class MainActivity : AppCompatActivity() {
             updateTrack(it)
         })
         setClickListeners()
+    }
+
+    override fun onDestroy() {
+        viewModel.onDestroy()
+        super.onDestroy()
     }
 
     private fun updateTrack(track: DeezerTrack) {
@@ -79,16 +80,5 @@ class MainActivity : AppCompatActivity() {
 
         btn_play_stop.setImageResource(R.drawable.ic_pause)
         mediaPlayer.start()
-    }
-
-
-    private fun showFragment(fragment: Fragment) {
-        val fragmentManager= supportFragmentManager
-//        val fragmentTransaction = fragmentManager.beginTransaction()
-//
-//        fragmentTransaction.replace(R.id.fragment_container, fragment)
-//        fragmentTransaction.addToBackStack(null)
-//        fragmentTransaction.commit()
-
     }
 }
