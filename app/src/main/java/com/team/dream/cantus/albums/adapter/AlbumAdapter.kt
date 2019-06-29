@@ -21,7 +21,6 @@ class AlbumAdapter : RecyclerView.Adapter<AlbumAdapter.AlbumViewHolder>() {
     private var listener: ClickListener? = null
 
 
-
     var albumList: MutableList<DeezerAlbum?>? = null
         get() {
             field?.let {
@@ -62,10 +61,10 @@ class AlbumAdapter : RecyclerView.Adapter<AlbumAdapter.AlbumViewHolder>() {
             albumList?.let { albums ->
 
                 Picasso
-                    .get()
-                    .load(albums[position]!!.cover_medium)
-                    .placeholder(R.drawable.ic_album_placeholder)
-                    .into(holder.imvCover)
+                        .get()
+                        .load(albums[position]!!.cover_medium)
+                        .placeholder(R.drawable.ic_album_placeholder)
+                        .into(holder.imvCover)
 
                 holder.txvAlbumName.text = albums[position]!!.title
                 holder.txvArtistName.text = albums[position]!!.artistName
@@ -85,15 +84,15 @@ class AlbumAdapter : RecyclerView.Adapter<AlbumAdapter.AlbumViewHolder>() {
         this.listener = listener
     }
 
-    open class AlbumViewHolder(itemView: View): RecyclerView.ViewHolder(itemView)
+    open class AlbumViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
-    class AlbumItemViewHolder(itemView: View): AlbumViewHolder(itemView) {
+    class AlbumItemViewHolder(itemView: View) : AlbumViewHolder(itemView) {
         val imvCover: AppCompatImageView = itemView.findViewById(R.id.item_album_imv_cover)
         val txvAlbumName: AppCompatTextView = itemView.findViewById(R.id.item_album_txv_name)
         val txvArtistName: AppCompatTextView = itemView.findViewById(R.id.item_album_txv_artist)
     }
 
-    class AlbumLoadingViewHolder(itemView: View): AlbumViewHolder(itemView)
+    class AlbumLoadingViewHolder(itemView: View) : AlbumViewHolder(itemView)
 
     interface ClickListener {
         fun onClick(album: DeezerAlbum, imageView: AppCompatImageView)

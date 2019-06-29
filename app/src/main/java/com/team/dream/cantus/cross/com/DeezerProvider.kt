@@ -1,6 +1,5 @@
 package com.team.dream.cantus.cross.com
 
-import android.util.Log
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.team.dream.cantus.cross.dto.ApiAlbumResponse
 import com.team.dream.cantus.cross.dto.ApiTrackResponse
@@ -24,19 +23,19 @@ object DeezerProvider {
 
     init {
         service = Retrofit.Builder().baseUrl(URLManager.getDeezer())
-            .client(createOkHttpClient())
-            .addCallAdapterFactory(CoroutineCallAdapterFactory())
-            .addConverterFactory(MoshiConverterFactory.create())
-            .build()
-            .create(DeezerService::class.java)
+                .client(createOkHttpClient())
+                .addCallAdapterFactory(CoroutineCallAdapterFactory())
+                .addConverterFactory(MoshiConverterFactory.create())
+                .build()
+                .create(DeezerService::class.java)
     }
 
     private fun createOkHttpClient(): OkHttpClient {
         val logging = HttpLoggingInterceptor()
         logging.level = HttpLoggingInterceptor.Level.BODY
         return OkHttpClient.Builder()
-            .addInterceptor(logging)
-            .build()
+                .addInterceptor(logging)
+                .build()
     }
 
 

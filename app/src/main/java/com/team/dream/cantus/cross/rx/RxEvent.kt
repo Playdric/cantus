@@ -5,12 +5,12 @@ import com.team.dream.cantus.cross.model.DeezerTrack
 
 class RxEvent {
 
-    // ex for here :
-    // data class EventAddPerson(val personName: String)
+//     ex for here :
+//     data class EventAddPerson(val personName: String)
     data class EventTrackSelection(val album: DeezerAlbum, val tracks: List<DeezerTrack>, val selectedTrack: DeezerTrack)
 
-    // publish example :
-    // RxBus.publish(RxEvent.EventAddPerson(etPersonName.text.toString()))
+//     publish example :
+//     RxBus.publish(RxEvent.EventAddPerson(etPersonName.text.toString()))
 
 //    Example on activity
 //    class Activity {

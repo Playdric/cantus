@@ -11,12 +11,12 @@ interface DeezerService {
 
     @GET("user/2529/albums")
     fun getAlbumsAsync(
-        @Query("index")
-        index: Int
+            @Query("index")
+            index: Int
     ): Deferred<ApiAlbumResponse>
 
     @GET("/album/{id}/tracks")
     fun getTracksAsync(
-        @Path("id") id: Int
+            @Path("id") id: Int
     ): Deferred<ApiTrackResponse>
 }

@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import com.team.dream.cantus.cross.com.DeezerProvider
 import com.team.dream.cantus.cross.model.DeezerAlbum
 
-class AlbumViewModel: ViewModel() {
+class AlbumViewModel : ViewModel() {
 
     private val TAG = "AlbumViewModel"
 
@@ -14,7 +14,7 @@ class AlbumViewModel: ViewModel() {
     val albumsLiveData: LiveData<List<DeezerAlbum>> = albumsMutableLiveData
 
     fun getAlbums(index: Int) {
-        DeezerProvider.getAlbums(index, object: DeezerProvider.Listener<List<DeezerAlbum>> {
+        DeezerProvider.getAlbums(index, object : DeezerProvider.Listener<List<DeezerAlbum>> {
             override fun onSuccess(data: List<DeezerAlbum>) {
                 albumsMutableLiveData.value = data
             }

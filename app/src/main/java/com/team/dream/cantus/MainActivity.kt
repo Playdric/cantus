@@ -57,10 +57,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateAlbum(album: DeezerAlbum) {
         Picasso
-            .get()
-            .load(album.cover_medium)
-            .placeholder(R.drawable.ic_album_placeholder)
-            .into(imv_album)
+                .get()
+                .load(album.cover_medium)
+                .placeholder(R.drawable.ic_album_placeholder)
+                .into(imv_album)
 
         txv_track_artist.text = album.artistName
     }

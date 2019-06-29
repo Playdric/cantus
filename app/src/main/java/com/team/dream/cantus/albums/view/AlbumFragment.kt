@@ -8,10 +8,8 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.navigation.NavDestination
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.FragmentNavigatorExtras
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.airbnb.lottie.LottieAnimationView
@@ -19,7 +17,6 @@ import com.team.dream.cantus.R
 import com.team.dream.cantus.albums.adapter.AlbumAdapter
 import com.team.dream.cantus.albums.viewmodel.AlbumViewModel
 import com.team.dream.cantus.cross.model.DeezerAlbum
-import kotlinx.android.synthetic.main.activity_main.view.*
 
 class AlbumFragment : Fragment() {
 
@@ -72,13 +69,13 @@ class AlbumFragment : Fragment() {
         rcvAlbums.apply {
             postponeEnterTransition()
             viewTreeObserver
-                .addOnPreDrawListener {
-                    startPostponedEnterTransition()
-                    true
-                }
+                    .addOnPreDrawListener {
+                        startPostponedEnterTransition()
+                        true
+                    }
         }
         val layoutManager = GridLayoutManager(context, 3)
-        layoutManager.spanSizeLookup = object: GridLayoutManager.SpanSizeLookup(){
+        layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
             override fun getSpanSize(position: Int): Int {
                 return when (adapter.getItemViewType(position)) {
                     AlbumAdapter.VIEW_TYPE_LOADING -> 3
@@ -88,11 +85,11 @@ class AlbumFragment : Fragment() {
 
         }
         rcvAlbums.layoutManager = layoutManager
-        adapter.setListener(object: AlbumAdapter.ClickListener{
+        adapter.setListener(object : AlbumAdapter.ClickListener {
             override fun onClick(album: DeezerAlbum, imageView: AppCompatImageView) {
                 view?.also {
                     val extras = FragmentNavigatorExtras(
-                        imageView to "album_cover"
+                            imageView to "album_cover"
                     )
                     val actionDetail = AlbumFragmentDirections.actionAlbumFragmentToTracklistFragment(album)
                     Navigation.findNavController(it).navigate(actionDetail, extras)
@@ -101,7 +98,7 @@ class AlbumFragment : Fragment() {
 
         })
 
-        rcvAlbums.addOnScrollListener(object: RecyclerView.OnScrollListener() {
+        rcvAlbums.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
                 val gridLayoutManager = recyclerView.layoutManager as GridLayoutManager

@@ -1,16 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
-            android:id="@+id/nav_graph" app:startDestination="@id/albumFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/albumFragment">
 
-    <fragment android:id="@+id/albumFragment" android:name="com.team.dream.cantus.albums.view.AlbumFragment"
-              android:label="AlbumFragment" tools:layout="@layout/fragment_album">
-        <action android:id="@+id/action_albumFragment_to_tracklistFragment" app:destination="@id/tracklistFragment"
-                app:enterAnim="@anim/nav_default_enter_anim" app:exitAnim="@anim/nav_default_exit_anim"
-                app:popEnterAnim="@anim/nav_default_pop_enter_anim" app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
+    <fragment
+        android:id="@+id/albumFragment"
+        android:name="com.team.dream.cantus.albums.view.AlbumFragment"
+        android:label="AlbumFragment"
+        tools:layout="@layout/fragment_album">
+        <action
+            android:id="@+id/action_albumFragment_to_tracklistFragment"
+            app:destination="@id/tracklistFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
-    <fragment android:id="@+id/tracklistFragment" android:name="com.team.dream.cantus.tracklist.view.TracklistFragment"
-              android:label="TracklistFragment" tools:layout="@layout/fragment_tracklist">
-        <argument android:name="album" app:argType="com.team.dream.cantus.cross.model.DeezerAlbum"/>
+    <fragment
+        android:id="@+id/tracklistFragment"
+        android:name="com.team.dream.cantus.tracklist.view.TracklistFragment"
+        android:label="TracklistFragment"
+        tools:layout="@layout/fragment_tracklist">
+        <argument
+            android:name="album"
+            app:argType="com.team.dream.cantus.cross.model.DeezerAlbum" />
     </fragment>
 </navigation>

@@ -4,18 +4,17 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.team.dream.cantus.cross.com.DeezerProvider
-import com.team.dream.cantus.cross.model.DeezerAlbum
 import com.team.dream.cantus.cross.model.DeezerTrack
 
-class TracklistViewModel: ViewModel() {
+class TracklistViewModel : ViewModel() {
 
     private val TAG = "AlbumViewModel"
 
     private val tracklistMutableLiveData = MutableLiveData<List<DeezerTrack>>()
-    val tracklistLiveData : LiveData<List<DeezerTrack>> = tracklistMutableLiveData
+    val tracklistLiveData: LiveData<List<DeezerTrack>> = tracklistMutableLiveData
 
     fun getTracklist(tracklistId: Int) {
-        DeezerProvider.getTracks(tracklistId, object: DeezerProvider.Listener<List<DeezerTrack>> {
+        DeezerProvider.getTracks(tracklistId, object : DeezerProvider.Listener<List<DeezerTrack>> {
             override fun onSuccess(data: List<DeezerTrack>) {
                 tracklistMutableLiveData.value = data
             }

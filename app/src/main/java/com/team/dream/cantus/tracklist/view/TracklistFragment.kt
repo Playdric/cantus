@@ -4,9 +4,7 @@ import android.graphics.drawable.BitmapDrawable
 import android.os.Build
 import android.os.Bundle
 import android.transition.TransitionInflater
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatImageView
@@ -26,9 +24,8 @@ import com.team.dream.cantus.cross.rx.RxBus
 import com.team.dream.cantus.cross.rx.RxEvent
 import com.team.dream.cantus.tracklist.adapter.TracklistAdapter
 import com.team.dream.cantus.tracklist.viewmodel.TracklistViewModel
-import java.lang.Exception
 
-class TracklistFragment: Fragment() {
+class TracklistFragment : Fragment() {
 
     private lateinit var viewModel: TracklistViewModel
     private lateinit var rcvTracklist: RecyclerView
@@ -65,29 +62,29 @@ class TracklistFragment: Fragment() {
         initRecyclerView()
         with(args.album) {
             Picasso
-                .get()
-                .load(cover_medium)
-                .placeholder(R.drawable.ic_album_placeholder)
-                .into(imvAlbumCover, object: com.squareup.picasso.Callback {
-                    override fun onSuccess() {
-                        val bmpDrawable = imvAlbumCover.drawable as BitmapDrawable
-                        Palette.from(bmpDrawable.bitmap).generate {
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                it?.let {palette ->
-                                    val color = palette.getLightVibrantColor(resources.getColor(R.color.tracklistUncollapsedToolbar, null))
-                                    toolbarBackground.setBackgroundColor(color)
-                                    motionLayout.getConstraintSet(R.id.start)?.let { startConstraintSet ->
-                                        startConstraintSet.setColorValue(R.id.tracklist_toolbar_background, "BackgroundColor", color)
+                    .get()
+                    .load(cover_medium)
+                    .placeholder(R.drawable.ic_album_placeholder)
+                    .into(imvAlbumCover, object : com.squareup.picasso.Callback {
+                        override fun onSuccess() {
+                            val bmpDrawable = imvAlbumCover.drawable as BitmapDrawable
+                            Palette.from(bmpDrawable.bitmap).generate {
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                    it?.let { palette ->
+                                        val color = palette.getLightVibrantColor(resources.getColor(R.color.tracklistUncollapsedToolbar, null))
+                                        toolbarBackground.setBackgroundColor(color)
+                                        motionLayout.getConstraintSet(R.id.start)?.let { startConstraintSet ->
+                                            startConstraintSet.setColorValue(R.id.tracklist_toolbar_background, "BackgroundColor", color)
+                                        }
                                     }
                                 }
                             }
                         }
-                    }
 
-                    override fun onError(e: Exception?) {
-                    }
+                        override fun onError(e: Exception?) {
+                        }
 
-                })
+                    })
             txvAlbumName.text = title
             txvArtist.text = artistName
             txvNbTrack.text = resources.getQuantityString(R.plurals.track_number, nb_tracks, nb_tracks)
@@ -110,7 +107,7 @@ class TracklistFragment: Fragment() {
         adapter = TracklistAdapter()
         rcvTracklist.adapter = adapter
         rcvTracklist.layoutManager = LinearLayoutManager(context)
-        adapter.setListener(object: TracklistAdapter.ClickListener {
+        adapter.setListener(object : TracklistAdapter.ClickListener {
             override fun onClick(track: DeezerTrack) {
                 adapter.tracks?.run {
                     RxBus.publish(RxEvent.EventTrackSelection(args.album, this, track))

@@ -7,9 +7,8 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.RecyclerView
 import com.team.dream.cantus.R
 import com.team.dream.cantus.cross.model.DeezerTrack
-import kotlinx.android.synthetic.main.item_track.view.*
 
-class TracklistAdapter: RecyclerView.Adapter<TracklistAdapter.TracklistViewHolder>(){
+class TracklistAdapter : RecyclerView.Adapter<TracklistAdapter.TracklistViewHolder>() {
 
     private var listener: ClickListener? = null
 

@@ -9,7 +9,7 @@ import com.team.dream.cantus.cross.rx.RxBus
 import com.team.dream.cantus.cross.rx.RxEvent
 import io.reactivex.disposables.Disposable
 
-class PlayerViewModel: ViewModel() {
+class PlayerViewModel : ViewModel() {
     private val albumMutableLiveData = MutableLiveData<DeezerAlbum>()
     private val trackMutableLiveData = MutableLiveData<DeezerTrack>()
     val albumLiveData: LiveData<DeezerAlbum> = albumMutableLiveData
