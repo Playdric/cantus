@@ -3,6 +3,7 @@ package com.team.dream.cantus
 import android.media.MediaPlayer
 import android.media.session.MediaSession
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.squareup.picasso.Picasso
@@ -22,12 +23,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        viewModel.albumLiveData.observe(this, Observer {
-            updateAlbum(it)
-        })
-        viewModel.trackLiveData.observe(this, Observer {
-            updateTrack(it)
-        })
+        initObservers()
         setClickListeners()
     }
 
@@ -36,14 +32,24 @@ class MainActivity : AppCompatActivity() {
         super.onDestroy()
     }
 
+    private fun initObservers() {
+        viewModel.albumLiveData.observe(this, Observer {
+            updateAlbum(it)
+        })
+        viewModel.trackLiveData.observe(this, Observer {
+            updateTrack(it)
+        })
+    }
+
     private fun updateTrack(track: DeezerTrack) {
-        txt_album_title.text = track.titleShort
+        txv_track_title.text = track.titleShort
         try {
             mediaPlayer.reset()
             mediaPlayer.setDataSource(track.preview)
             mediaPlayer.prepare()
-        } catch (err: Error) {
-            print(err)
+        } catch (err: Exception) {
+            err.printStackTrace()
+            Toast.makeText(this, R.string.error_reading_track, Toast.LENGTH_SHORT).show()
         }
 
         handleMediaPlayerView(mediaPlayer.isPlaying)
@@ -56,7 +62,7 @@ class MainActivity : AppCompatActivity() {
             .placeholder(R.drawable.ic_album_placeholder)
             .into(imv_album)
 
-        txt_album_artist.text = album.artistName
+        txv_track_artist.text = album.artistName
     }
 
     private fun setClickListeners() {

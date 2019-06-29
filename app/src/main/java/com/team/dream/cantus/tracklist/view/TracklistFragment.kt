@@ -4,6 +4,7 @@ import android.graphics.drawable.BitmapDrawable
 import android.os.Build
 import android.os.Bundle
 import android.transition.TransitionInflater
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -77,7 +78,6 @@ class TracklistFragment: Fragment() {
                                     toolbarBackground.setBackgroundColor(color)
                                     motionLayout.getConstraintSet(R.id.start)?.let { startConstraintSet ->
                                         startConstraintSet.setColorValue(R.id.tracklist_toolbar_background, "BackgroundColor", color)
-                                        // You can set the width and height here as well
                                     }
                                 }
                             }
