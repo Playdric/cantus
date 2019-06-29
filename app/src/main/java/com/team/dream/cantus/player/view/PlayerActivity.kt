@@ -1,4 +1,4 @@
-package com.team.dream.cantus
+package com.team.dream.cantus.player.view
 
 import android.media.MediaPlayer
 import android.media.session.MediaSession
@@ -7,13 +7,14 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.squareup.picasso.Picasso
+import com.team.dream.cantus.R
 import com.team.dream.cantus.cross.model.DeezerAlbum
 import com.team.dream.cantus.cross.model.DeezerTrack
 import com.team.dream.cantus.player.viewmodel.PlayerViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 
 
-class MainActivity : AppCompatActivity() {
+class PlayerActivity : AppCompatActivity() {
 
     private var viewModel = PlayerViewModel()
     private var mediaPlayer = MediaPlayer()
