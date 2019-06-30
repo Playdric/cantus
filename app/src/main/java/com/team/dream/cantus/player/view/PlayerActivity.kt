@@ -1,7 +1,6 @@
 package com.team.dream.cantus.player.view
 
 import android.media.MediaPlayer
-import android.media.session.MediaSession
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -19,8 +18,6 @@ class PlayerActivity : AppCompatActivity() {
     private var viewModel = PlayerViewModel()
     private var mediaPlayer = MediaPlayer()
 
-    private lateinit var mediaSession: MediaSession
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -35,28 +32,24 @@ class PlayerActivity : AppCompatActivity() {
 
     private fun initObservers() {
         viewModel.albumLiveData.observe(this, Observer {
-            updateAlbum(it)
+            onChangeAlbum(it)
         })
         viewModel.trackLiveData.observe(this, Observer {
-            updateTrack(it)
+            onChangeTrack(it)
+        })
+        viewModel.isPlayingLiveData.observe(this, Observer {
+            onChangeIsPlaying(it)
+        })
+        viewModel.toastLiveData.observe(this, Observer {
+            onChangeToast(it)
         })
     }
 
-    private fun updateTrack(track: DeezerTrack) {
+    private fun onChangeTrack(track: DeezerTrack) {
         txv_track_title.text = track.titleShort
-        try {
-            mediaPlayer.reset()
-            mediaPlayer.setDataSource(track.preview)
-            mediaPlayer.prepare()
-        } catch (err: Exception) {
-            err.printStackTrace()
-            Toast.makeText(this, R.string.error_reading_track, Toast.LENGTH_SHORT).show()
-        }
-
-        handleMediaPlayerView(mediaPlayer.isPlaying)
     }
 
-    private fun updateAlbum(album: DeezerAlbum) {
+    private fun onChangeAlbum(album: DeezerAlbum) {
         Picasso
                 .get()
                 .load(album.cover_medium)
@@ -66,26 +59,39 @@ class PlayerActivity : AppCompatActivity() {
         txv_track_artist.text = album.artistName
     }
 
-    private fun setClickListeners() {
-        btn_play_stop.setOnClickListener {
-            handleMediaPlayerView(mediaPlayer.isPlaying)
-        }
-        btn_previous.setOnClickListener {
-            viewModel.getPrevious()
-        }
-        btn_next.setOnClickListener {
-            viewModel.getNext()
+    private fun onChangeIsPlaying(isPlaying: Boolean) {
+        if (isPlaying) {
+            btn_play_stop.setImageResource(R.drawable.ic_pause)
+        } else {
+            btn_play_stop.setImageResource(R.drawable.ic_play)
         }
     }
 
-    private fun handleMediaPlayerView(playing: Boolean) {
-        if (playing) {
-            btn_play_stop.setImageResource(R.drawable.ic_play)
-            mediaPlayer.pause()
-            return
-        }
+    private fun onChangeToast(value: Int) {
+        Toast.makeText(this, value, Toast.LENGTH_SHORT).show()
+    }
 
-        btn_play_stop.setImageResource(R.drawable.ic_pause)
-        mediaPlayer.start()
+    private fun setClickListeners() {
+        btn_play_stop.setOnClickListener {
+            onClickPlayPause()
+        }
+        btn_previous.setOnClickListener {
+            onClickPrevious()
+        }
+        btn_next.setOnClickListener {
+            onClickNext()
+        }
+    }
+
+    private fun onClickPlayPause() {
+        viewModel.onClickPlayPause()
+    }
+
+    private fun onClickPrevious() {
+        viewModel.onClickPrevious()
+    }
+
+    private fun onClickNext() {
+        viewModel.onClickNext()
     }
 }
