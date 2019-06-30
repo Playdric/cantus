@@ -1,32 +1,50 @@
 package com.team.dream.cantus.player.view
 
+import android.content.Intent
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import com.squareup.picasso.Picasso
 import com.team.dream.cantus.R
 import com.team.dream.cantus.cross.model.DeezerAlbum
 import com.team.dream.cantus.cross.model.DeezerTrack
+import com.team.dream.cantus.cross.rx.RxBus
+import com.team.dream.cantus.cross.rx.RxEvent
+import com.team.dream.cantus.player.service.PlayerService
 import com.team.dream.cantus.player.viewmodel.PlayerViewModel
+import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_main.*
 
 
 class PlayerActivity : AppCompatActivity() {
 
-    private var viewModel = PlayerViewModel()
+    private lateinit var viewModel: PlayerViewModel
     private var mediaPlayer = MediaPlayer()
+    private lateinit var disposable: Disposable
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        viewModel = PlayerViewModel(application)
+
+        disposable = RxBus.listen(RxEvent.EventTrackSelection::class.java).subscribe {
+            val intent = Intent(this, PlayerService::class.java)
+            intent.action = PlayerService.ACTION_SET_TRACKLIST
+            ContextCompat.startForegroundService(this, intent)
+        }
+
         initObservers()
         setClickListeners()
     }
 
     override fun onDestroy() {
         viewModel.onDestroy()
+        disposable.dispose()
+        val intent = Intent(this, PlayerService::class.java)
+        stopService(intent)
         super.onDestroy()
     }
 

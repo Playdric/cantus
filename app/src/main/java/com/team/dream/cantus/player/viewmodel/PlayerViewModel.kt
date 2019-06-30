@@ -1,6 +1,9 @@
 package com.team.dream.cantus.player.viewmodel
 
+import android.app.Application
 import android.media.MediaPlayer
+import android.media.session.MediaSession
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -15,7 +18,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class PlayerViewModel : ViewModel() {
+class PlayerViewModel(app: Application) : AndroidViewModel(app) {
 
     private val albumMutableLiveData = MutableLiveData<DeezerAlbum>()
     private val trackMutableLiveData = MutableLiveData<DeezerTrack>()
