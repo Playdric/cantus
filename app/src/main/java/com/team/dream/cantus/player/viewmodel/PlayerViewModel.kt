@@ -1,7 +1,6 @@
 package com.team.dream.cantus.player.viewmodel
 
 import android.media.MediaPlayer
-import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,6 +10,10 @@ import com.team.dream.cantus.cross.model.DeezerTrack
 import com.team.dream.cantus.cross.rx.RxBus
 import com.team.dream.cantus.cross.rx.RxEvent
 import io.reactivex.disposables.Disposable
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class PlayerViewModel : ViewModel() {
 
@@ -62,15 +65,22 @@ class PlayerViewModel : ViewModel() {
     private fun updateTrack(track: DeezerTrack) {
         trackMutableLiveData.value = track
 
-        try {
-            mediaPlayer.reset()
-            mediaPlayer.setDataSource(track.preview)
-            mediaPlayer.prepare()
-            play()
-        } catch (err: Exception) {
-            err.printStackTrace()
-            toastMutableLiveData.value = R.string.error_reading_track
+        GlobalScope.launch {
+            try {
+                mediaPlayer.reset()
+                mediaPlayer.setDataSource(track.preview)
+                mediaPlayer.prepare()
+                withContext(Dispatchers.Main) {
+                    play()
+                }
+            } catch (err: Exception) {
+                err.printStackTrace()
+                withContext(Dispatchers.Main) {
+                    toastMutableLiveData.value = R.string.error_reading_track
+                }
+            }
         }
+
     }
 
     private fun play() {
