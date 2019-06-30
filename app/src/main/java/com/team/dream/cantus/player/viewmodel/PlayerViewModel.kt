@@ -36,6 +36,10 @@ class PlayerViewModel : ViewModel() {
             currentAlbumTracks = it.tracks
             updateTrack(it.selectedTrack)
         }
+
+        mediaPlayer.setOnCompletionListener {
+            getNext()
+        }
     }
 
     private fun getNext() {
