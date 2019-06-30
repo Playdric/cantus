@@ -17,9 +17,11 @@ class PlayerViewModel : ViewModel() {
     private val albumMutableLiveData = MutableLiveData<DeezerAlbum>()
     private val trackMutableLiveData = MutableLiveData<DeezerTrack>()
     private val isPlayingMutableLiveData = MutableLiveData<Boolean>()
+    private val toastMutableLiveData = MutableLiveData<Int>()
     val albumLiveData: LiveData<DeezerAlbum> = albumMutableLiveData
     val trackLiveData: LiveData<DeezerTrack> = trackMutableLiveData
     val isPlayingLiveData: LiveData<Boolean> = isPlayingMutableLiveData
+    val toastLiveData: LiveData<Int> = toastMutableLiveData
 
     private var disposable: Disposable
     private var currentAlbumTracks: List<DeezerTrack>? = null
@@ -67,6 +69,7 @@ class PlayerViewModel : ViewModel() {
             play()
         } catch (err: Exception) {
             err.printStackTrace()
+            toastMutableLiveData.value = R.string.error_reading_track
         }
     }
 

@@ -40,6 +40,9 @@ class PlayerActivity : AppCompatActivity() {
         viewModel.isPlayingLiveData.observe(this, Observer {
             onChangeIsPlaying(it)
         })
+        viewModel.toastLiveData.observe(this, Observer {
+            onChangeToast(it)
+        })
     }
 
     private fun onChangeTrack(track: DeezerTrack) {
@@ -62,6 +65,10 @@ class PlayerActivity : AppCompatActivity() {
         } else {
             btn_play_stop.setImageResource(R.drawable.ic_play)
         }
+    }
+
+    private fun onChangeToast(value: Int) {
+        Toast.makeText(this, value, Toast.LENGTH_SHORT).show()
     }
 
     private fun setClickListeners() {
