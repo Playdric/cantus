@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="@dimen/margin_small">
+
+    <ImageView
+        android:id="@+id/item_album_imv_cover"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@tools:sample/avatars" />
+
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:background="@drawable/item_album_text_background"
+        app:layout_constraintBottom_toBottomOf="@id/item_album_imv_cover"
+        app:layout_constraintEnd_toEndOf="@id/item_album_imv_cover"
+        app:layout_constraintStart_toStartOf="@id/item_album_imv_cover"
+        app:layout_constraintTop_toTopOf="@id/item_album_txv_name" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/item_album_txv_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_small"
+        android:layout_marginEnd="@dimen/margin_small"
+        android:ellipsize="end"
+        android:maxLines="1"
+        app:layout_constraintBottom_toTopOf="@id/item_album_txv_artist"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="Nom de l'albumMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/item_album_txv_artist"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_small"
+        android:layout_marginEnd="@dimen/margin_small"
+        android:ellipsize="end"
+        android:maxLines="1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="Nom de l'artiste" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

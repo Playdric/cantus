@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="margin_xlarge">18dp</dimen>
+    <dimen name="margin_large">16dp</dimen>
+    <dimen name="margin_medium">12dp</dimen>
+    <dimen name="margin_small">8dp</dimen>
+
+    <dimen name="separator_margin">64dp</dimen>
+
+    <dimen name="music_note_size">48dp</dimen>
+</resources>

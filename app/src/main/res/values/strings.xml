@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Cantus</string>
+    <string name="error_reading_track">Can\'t read this track</string>
+    <string name="error_no_data">Sorry, there\'s no data...</string>
+    <plurals name="track_number">
+        <item quantity="one">%d track</item>
+        <item quantity="other">%d tracks</item>
+    </plurals>
 </resources>
