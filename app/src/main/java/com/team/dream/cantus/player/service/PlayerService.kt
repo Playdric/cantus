@@ -4,6 +4,8 @@ import android.annotation.TargetApi
 import android.app.*
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.media.MediaPlayer
 import android.os.Build
 import android.os.IBinder
@@ -13,6 +15,8 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.media.MediaSessionManager
+import com.squareup.picasso.Picasso
+import com.squareup.picasso.Target
 import com.team.dream.cantus.R
 import com.team.dream.cantus.cross.model.DeezerAlbum
 import com.team.dream.cantus.cross.model.DeezerTrack
@@ -46,6 +50,8 @@ class PlayerService() : Service() {
         private const val TAG = "PlayerService"
     }
 
+    private var bitmapAlbum: Bitmap? = null
+
     private lateinit var mediaSession: MediaSessionCompat
     private lateinit var mediaPlayer: MediaPlayer
     private lateinit var mediaManager: MediaSessionManager
@@ -55,7 +61,6 @@ class PlayerService() : Service() {
     private lateinit var album: DeezerAlbum
     private lateinit var currentTrack: DeezerTrack
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.i(TAG, "onStartCommand()")
         if (mediaController == null) {
@@ -70,7 +75,6 @@ class PlayerService() : Service() {
         return super.onStartCommand(intent, flags, startId)
     }
 
-    @TargetApi(Build.VERSION_CODES.O)
     private fun createNotificationChannel() {
         val notifManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notifManager.createNotificationChannel(
@@ -82,7 +86,6 @@ class PlayerService() : Service() {
         )
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun handleintentAction(intent: Intent) {
 
         intent.action?.let {
@@ -96,7 +99,6 @@ class PlayerService() : Service() {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun setTrackList(intent: Intent) {
         val bundle = intent.getBundleExtra(BUNDLE_NAME)
         currentTrack = bundle.getParcelable(BUNDLE_KEY_CURR_TRACK)
@@ -105,6 +107,7 @@ class PlayerService() : Service() {
         val notification = buildNotification(generateAction(R.drawable.ic_pause, "pause", ACTION_PLAY_PAUSE))
         startForeground(1, notification)
         updateTrack(currentTrack)
+        downloadBitmap()
     }
 
     private fun initMedia() {
@@ -120,7 +123,6 @@ class PlayerService() : Service() {
 
         mediaSession.setCallback(object : MediaSessionCompat.Callback() {
             val TAG = "MediaCallback"
-            @RequiresApi(Build.VERSION_CODES.O)
             override fun onPlay() {
                 super.onPlay()
                 mediaPlayer.start()
@@ -129,7 +131,6 @@ class PlayerService() : Service() {
                 Log.i(TAG, "onPlay() called")
             }
 
-            @RequiresApi(Build.VERSION_CODES.O)
             override fun onPause() {
                 super.onPause()
                 mediaPlayer.pause()
@@ -138,7 +139,6 @@ class PlayerService() : Service() {
                 Log.i(TAG, "onPause() called")
             }
 
-            @RequiresApi(Build.VERSION_CODES.O)
             override fun onSkipToNext() {
                 super.onSkipToNext()
                 getNext()
@@ -146,7 +146,6 @@ class PlayerService() : Service() {
                 Log.i(TAG, "onSkipToNext() called")
             }
 
-            @RequiresApi(Build.VERSION_CODES.O)
             override fun onSkipToPrevious() {
                 super.onSkipToPrevious()
                 getPrevious()
@@ -154,7 +153,6 @@ class PlayerService() : Service() {
                 Log.i(TAG, "onSkipToPrevious() called")
             }
 
-            @RequiresApi(Build.VERSION_CODES.O)
             override fun onStop() {
                 super.onStop()
                 //TODO cancel notification
@@ -165,7 +163,6 @@ class PlayerService() : Service() {
         mediaManager = MediaSessionManager.getSessionManager(applicationContext)
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun buildNotification(action: NotificationCompat.Action): Notification {
 
         val deleteIntent = Intent(applicationContext, PlayerService::class.java)
@@ -191,6 +188,10 @@ class PlayerService() : Service() {
             .addAction(generateAction(R.drawable.ic_previous, "previous", ACTION_PREVIOUS))
             .addAction(action)
             .addAction(generateAction(R.drawable.ic_next, "next", ACTION_NEXT))
+
+        bitmapAlbum?.let {
+            notification.setLargeIcon(it)
+        }
 
         (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).notify(1, notification.build())
         return notification.build()
@@ -248,6 +249,28 @@ class PlayerService() : Service() {
             }
         }
 
+    }
+
+    private fun downloadBitmap() {
+        Picasso
+            .get()
+            .load(album.cover_medium)
+            .into(object: Target {
+                override fun onPrepareLoad(placeHolderDrawable: Drawable?) {
+                }
+
+                override fun onBitmapFailed(e: java.lang.Exception?, errorDrawable: Drawable?) {
+                }
+
+                override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
+                    bitmapAlbum = bitmap
+                    if (mediaPlayer.isPlaying)
+                        buildNotification(generateAction(R.drawable.ic_pause, "pause", ACTION_PLAY_PAUSE))
+                    else
+                        buildNotification(generateAction(R.drawable.ic_play, "play", ACTION_PLAY_PAUSE))
+                }
+
+            })
     }
 
     override fun onBind(intent: Intent): IBinder? {

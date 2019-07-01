@@ -73,10 +73,10 @@ class PlayerActivity : AppCompatActivity() {
 
     private fun onChangeAlbum(album: DeezerAlbum) {
         Picasso
-                .get()
-                .load(album.cover_medium)
-                .placeholder(R.drawable.ic_album_placeholder)
-                .into(imv_album)
+            .get()
+            .load(album.cover_medium)
+            .placeholder(R.drawable.ic_album_placeholder)
+            .into(imv_album)
 
         txv_track_artist.text = album.artistName
     }
@@ -119,7 +119,7 @@ class PlayerActivity : AppCompatActivity() {
 
     private fun sendIntent(action: String) {
         val intent = Intent(this, PlayerService::class.java)
-        intent.action =action
+        intent.action = action
         ContextCompat.startForegroundService(this, intent)
     }
 }
