@@ -15,7 +15,6 @@ import com.team.dream.cantus.cross.rx.RxBus
 import com.team.dream.cantus.cross.rx.RxEvent
 import com.team.dream.cantus.player.service.PlayerService
 import com.team.dream.cantus.player.viewmodel.PlayerViewModel
-import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -23,18 +22,23 @@ class PlayerActivity : AppCompatActivity() {
 
     private lateinit var viewModel: PlayerViewModel
     private var mediaPlayer = MediaPlayer()
-    private lateinit var disposable: Disposable
+
+
+    private val onTrackSelectionDisposable = RxBus.listen(RxEvent.EventTrackSelection::class.java).subscribe {
+        val intent = Intent(this, PlayerService::class.java)
+        intent.action = PlayerService.ACTION_SET_TRACKLIST
+        val bundle = Bundle()
+        bundle.putParcelableArrayList(PlayerService.BUNDLE_KEY_TRACKLIST, ArrayList(it.tracks))
+        bundle.putParcelable(PlayerService.BUNDLE_KEY_CURR_TRACK, it.selectedTrack)
+        bundle.putParcelable(PlayerService.BUNDLE_KEY_ALBUM, it.album)
+        intent.putExtra(PlayerService.BUNDLE_NAME, bundle)
+        ContextCompat.startForegroundService(this, intent)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         viewModel = PlayerViewModel(application)
-
-        disposable = RxBus.listen(RxEvent.EventTrackSelection::class.java).subscribe {
-            val intent = Intent(this, PlayerService::class.java)
-            intent.action = PlayerService.ACTION_SET_TRACKLIST
-            ContextCompat.startForegroundService(this, intent)
-        }
 
         initObservers()
         setClickListeners()
@@ -42,7 +46,7 @@ class PlayerActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         viewModel.onDestroy()
-        disposable.dispose()
+        onTrackSelectionDisposable.dispose()
         val intent = Intent(this, PlayerService::class.java)
         stopService(intent)
         super.onDestroy()
@@ -102,14 +106,20 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private fun onClickPlayPause() {
-        viewModel.onClickPlayPause()
+        sendIntent(PlayerService.ACTION_PLAY_PAUSE)
     }
 
     private fun onClickPrevious() {
-        viewModel.onClickPrevious()
+        sendIntent(PlayerService.ACTION_PREVIOUS)
     }
 
     private fun onClickNext() {
-        viewModel.onClickNext()
+        sendIntent(PlayerService.ACTION_NEXT)
+    }
+
+    private fun sendIntent(action: String) {
+        val intent = Intent(this, PlayerService::class.java)
+        intent.action =action
+        ContextCompat.startForegroundService(this, intent)
     }
 }

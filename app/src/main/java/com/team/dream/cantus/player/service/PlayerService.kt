@@ -14,12 +14,10 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.media.MediaSessionManager
 import com.team.dream.cantus.R
-import com.team.dream.cantus.cross.model.DeezerTrack
-import android.app.PendingIntent
 import com.team.dream.cantus.cross.model.DeezerAlbum
+import com.team.dream.cantus.cross.model.DeezerTrack
 import com.team.dream.cantus.cross.rx.RxBus
 import com.team.dream.cantus.cross.rx.RxEvent
-import io.reactivex.disposables.Disposable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -29,8 +27,7 @@ import kotlinx.coroutines.withContext
 class PlayerService() : Service() {
 
     companion object {
-        const val ACTION_PLAY = "ACTION_PLAY"
-        const val ACTION_PAUSE = "ACTION_PAUSE"
+        const val ACTION_PLAY_PAUSE = "ACTION_PLAY_PAUSE"
         const val ACTION_NEXT = "ACTION_NEXT"
         const val ACTION_PREVIOUS = "ACTION_PREVIOUS"
         const val ACTION_STOP = "ACTION_STOP"
@@ -53,19 +50,9 @@ class PlayerService() : Service() {
     private lateinit var mediaManager: MediaSessionManager
     private var mediaController: MediaControllerCompat? = null
 
-    private var disposable: Disposable
-
     private lateinit var tracklist: List<DeezerTrack>
     private lateinit var album: DeezerAlbum
     private lateinit var currentTrack: DeezerTrack
-
-    init {
-        disposable = RxBus.listen(RxEvent.EventTrackSelection::class.java).subscribe {
-            currentTrack = it.selectedTrack
-            album = it.album
-            tracklist = it.tracks
-        }
-    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -85,20 +72,21 @@ class PlayerService() : Service() {
     @TargetApi(Build.VERSION_CODES.O)
     private fun createNotificationChannel() {
         val notifManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notifManager.createNotificationChannel(NotificationChannel(
-            CHANNEL_ID,
-            CHANNEL_NAME,
-            NotificationManager.IMPORTANCE_LOW
-        ))
+        notifManager.createNotificationChannel(
+            NotificationChannel(
+                CHANNEL_ID,
+                CHANNEL_NAME,
+                NotificationManager.IMPORTANCE_LOW
+            )
+        )
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun handleintentAction(intent: Intent) {
 
         intent.action?.let {
-            when(it) {
-                ACTION_PLAY -> mediaController!!.transportControls.play()
-                ACTION_PAUSE -> mediaController!!.transportControls.pause()
+            when (it) {
+                ACTION_PLAY_PAUSE -> mediaController!!.transportControls.playPause()
                 ACTION_NEXT -> mediaController!!.transportControls.skipToNext()
                 ACTION_PREVIOUS -> mediaController!!.transportControls.skipToPrevious()
                 ACTION_STOP -> mediaController!!.transportControls.stop()
@@ -109,7 +97,11 @@ class PlayerService() : Service() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun setTrackList(intent: Intent) {
-        val notification = buildNotification(generateAction(R.drawable.ic_pause, "pause", ACTION_PAUSE))
+        val bundle = intent.getBundleExtra(BUNDLE_NAME)
+        currentTrack = bundle.getParcelable(BUNDLE_KEY_CURR_TRACK)
+        album = bundle.getParcelable(BUNDLE_KEY_ALBUM)
+        tracklist = bundle.getParcelableArrayList(BUNDLE_KEY_TRACKLIST)
+        val notification = buildNotification(generateAction(R.drawable.ic_pause, "pause", ACTION_PLAY_PAUSE))
         startForeground(1, notification)
         updateTrack(currentTrack)
     }
@@ -117,17 +109,22 @@ class PlayerService() : Service() {
     private fun initMedia() {
         mediaPlayer = MediaPlayer()
 
+        mediaPlayer.setOnCompletionListener {
+            getNext()
+        }
+
         mediaSession = MediaSessionCompat(applicationContext, SESSION_NAME)
 
         mediaController = MediaControllerCompat(applicationContext, mediaSession)
 
-        mediaSession.setCallback(object: MediaSessionCompat.Callback() {
+        mediaSession.setCallback(object : MediaSessionCompat.Callback() {
             val TAG = "MediaCallback"
             @RequiresApi(Build.VERSION_CODES.O)
             override fun onPlay() {
                 super.onPlay()
                 mediaPlayer.start()
-                buildNotification(generateAction(R.drawable.ic_pause, "pause", ACTION_PAUSE))
+                RxBus.publish(RxEvent.EventOnPlayPause(isPlaying = true))
+                buildNotification(generateAction(R.drawable.ic_pause, "pause", ACTION_PLAY_PAUSE))
                 Log.i(TAG, "onPlay() called")
             }
 
@@ -135,30 +132,32 @@ class PlayerService() : Service() {
             override fun onPause() {
                 super.onPause()
                 mediaPlayer.pause()
-                buildNotification(generateAction(R.drawable.ic_play, "play", ACTION_PLAY))
-                Log.i(TAG, "onPlay() called")
+                RxBus.publish(RxEvent.EventOnPlayPause(isPlaying = false))
+                buildNotification(generateAction(R.drawable.ic_play, "play", ACTION_PLAY_PAUSE))
+                Log.i(TAG, "onPause() called")
             }
 
             @RequiresApi(Build.VERSION_CODES.O)
             override fun onSkipToNext() {
                 super.onSkipToNext()
-
-                buildNotification(generateAction(R.drawable.ic_pause, "pause", ACTION_PAUSE))
-                Log.i(TAG, "onPlay() called")
+                getNext()
+                buildNotification(generateAction(R.drawable.ic_pause, "pause", ACTION_PLAY_PAUSE))
+                Log.i(TAG, "onSkipToNext() called")
             }
 
             @RequiresApi(Build.VERSION_CODES.O)
             override fun onSkipToPrevious() {
                 super.onSkipToPrevious()
-                buildNotification(generateAction(R.drawable.ic_pause, "pause", ACTION_PAUSE))
-                Log.i(TAG, "onPlay() called")
+                getPrevious()
+                buildNotification(generateAction(R.drawable.ic_pause, "pause", ACTION_PLAY_PAUSE))
+                Log.i(TAG, "onSkipToPrevious() called")
             }
 
             @RequiresApi(Build.VERSION_CODES.O)
             override fun onStop() {
                 super.onStop()
                 //TODO cancel notification
-                Log.i(TAG, "onPlay() called")
+                Log.i(TAG, "onStop() called")
             }
         })
 
@@ -172,12 +171,20 @@ class PlayerService() : Service() {
         deleteIntent.action = ACTION_STOP
         val deletePendingIntent = PendingIntent.getForegroundService(applicationContext, 1, deleteIntent, 0)
 
+        val mediaStyle = androidx.media.app.NotificationCompat.MediaStyle()
+            .setMediaSession(mediaSession.sessionToken)
+            .setShowActionsInCompactView(3)
+
         val notification = NotificationCompat.Builder(applicationContext, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle(currentTrack.title)
             .setContentText(album.title)
             .setDeleteIntent(deletePendingIntent)
-            .setStyle(androidx.media.app.NotificationCompat.MediaStyle().setMediaSession(mediaSession.sessionToken))
+            .setStyle(
+                androidx.media.app.NotificationCompat.MediaStyle()
+                    .setMediaSession(mediaSession.sessionToken)
+                    .setShowActionsInCompactView(0, 1, 2)
+            )
             .addAction(generateAction(R.drawable.ic_previous, "previous", ACTION_PREVIOUS))
             .addAction(action)
             .addAction(generateAction(R.drawable.ic_next, "next", ACTION_NEXT))
@@ -192,7 +199,6 @@ class PlayerService() : Service() {
         val pendingIntent = PendingIntent.getService(applicationContext, 1, intent, 0)
         return NotificationCompat.Action.Builder(icon, title, pendingIntent).build()
     }
-
 
 
     private fun getNext() {
@@ -220,18 +226,21 @@ class PlayerService() : Service() {
     }
 
     private fun updateTrack(track: DeezerTrack) {
+        currentTrack = track
+        RxBus.publish(RxEvent.EventOnTrackUpdated(currentTrack, album))
         GlobalScope.launch {
             try {
                 mediaPlayer.reset()
                 mediaPlayer.setDataSource(track.preview)
                 mediaPlayer.prepare()
                 withContext(Dispatchers.Main) {
-                    mediaPlayer.start()
+                    mediaController!!.transportControls.playPause()
+                    //mediaPlayer.start()
                 }
             } catch (err: Exception) {
                 err.printStackTrace()
                 withContext(Dispatchers.Main) {
-                    //toastMutableLiveData.value = R.string.error_reading_track
+                    RxBus.publish(RxEvent.EventOnPlayError(err, R.string.error_reading_track))
                 }
             }
         }
@@ -244,7 +253,13 @@ class PlayerService() : Service() {
 
     override fun onUnbind(intent: Intent?): Boolean {
         mediaSession.release()
-        disposable.dispose()
         return super.onUnbind(intent)
+    }
+
+    private fun MediaControllerCompat.TransportControls.playPause() {
+        if (mediaPlayer.isPlaying)
+            pause()
+        else
+            play()
     }
 }

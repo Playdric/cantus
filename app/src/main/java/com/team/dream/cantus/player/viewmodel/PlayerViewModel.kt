@@ -1,22 +1,13 @@
 package com.team.dream.cantus.player.viewmodel
 
 import android.app.Application
-import android.media.MediaPlayer
-import android.media.session.MediaSession
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import com.team.dream.cantus.R
 import com.team.dream.cantus.cross.model.DeezerAlbum
 import com.team.dream.cantus.cross.model.DeezerTrack
 import com.team.dream.cantus.cross.rx.RxBus
 import com.team.dream.cantus.cross.rx.RxEvent
-import io.reactivex.disposables.Disposable
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class PlayerViewModel(app: Application) : AndroidViewModel(app) {
 
@@ -29,94 +20,39 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
     val isPlayingLiveData: LiveData<Boolean> = isPlayingMutableLiveData
     val toastLiveData: LiveData<Int> = toastMutableLiveData
 
-    private var disposable: Disposable
+    private val onPlayPauseDisposable = RxBus.listen(RxEvent.EventOnPlayPause::class.java).subscribe {
+        isPlayingMutableLiveData.value = it.isPlaying
+    }
+    private val onTrackUpdatedDisposable = RxBus.listen(RxEvent.EventOnTrackUpdated::class.java).subscribe {
+        trackMutableLiveData.value = it.track
+        albumMutableLiveData.value = it.album
+    }
+    private val onPlayErrorDisposable = RxBus.listen(RxEvent.EventOnPlayError::class.java).subscribe {
+        toastMutableLiveData.value = it.message
+    }
+
     private var currentAlbumTracks: List<DeezerTrack>? = null
-    private var mediaPlayer = MediaPlayer()
 
     init {
-        disposable = RxBus.listen(RxEvent.EventTrackSelection::class.java).subscribe {
-            albumMutableLiveData.value = it.album
-            currentAlbumTracks = it.tracks
-            updateTrack(it.selectedTrack)
-        }
-
-        mediaPlayer.setOnCompletionListener {
-            getNext()
-        }
-    }
-
-    private fun getNext() {
-        currentAlbumTracks?.run {
-            var index = this.indexOfFirst { it.id == trackLiveData.value?.id }
-            if (index == this.lastIndex) {
-                updateTrack(this[0])
-                return
-            }
-
-            updateTrack(this[++index])
-        }
-    }
-
-    private fun getPrevious() {
-        currentAlbumTracks?.run {
-            var index = this.indexOfFirst { it.id == trackLiveData.value?.id }
-            if (index == 0) {
-                updateTrack(this.last())
-                return
-            }
-
-            updateTrack(this[--index])
-        }
     }
 
     private fun updateTrack(track: DeezerTrack) {
         trackMutableLiveData.value = track
-
-        GlobalScope.launch {
-            try {
-                mediaPlayer.reset()
-                mediaPlayer.setDataSource(track.preview)
-                mediaPlayer.prepare()
-                withContext(Dispatchers.Main) {
-                    play()
-                }
-            } catch (err: Exception) {
-                err.printStackTrace()
-                withContext(Dispatchers.Main) {
-                    toastMutableLiveData.value = R.string.error_reading_track
-                }
-            }
-        }
-
-    }
-
-    private fun play() {
-        mediaPlayer.start()
-        isPlayingMutableLiveData.value = true
-    }
-
-    private fun pause() {
-        mediaPlayer.pause()
-        isPlayingMutableLiveData.value = false
     }
 
     fun onClickPlayPause() {
-        if (mediaPlayer.isPlaying) {
-            pause()
-        } else {
-            play()
-        }
+
     }
 
     fun onClickPrevious() {
-        getPrevious()
     }
 
     fun onClickNext() {
-        getNext()
     }
 
     fun onDestroy() {
-        disposable.dispose()
+        onPlayErrorDisposable.dispose()
+        onTrackUpdatedDisposable.dispose()
+        onPlayPauseDisposable.dispose()
     }
 }
