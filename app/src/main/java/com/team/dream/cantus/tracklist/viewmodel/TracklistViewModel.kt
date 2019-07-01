@@ -21,7 +21,7 @@ class TracklistViewModel : ViewModel() {
 
             override fun onError(t: Throwable) {
                 t.printStackTrace()
-                tracklistMutableLiveData.value = listOf(DeezerTrack(0, "Error no data", "Error no data", "Error no data"))
+                tracklistMutableLiveData.value = listOf()
             }
 
         })
