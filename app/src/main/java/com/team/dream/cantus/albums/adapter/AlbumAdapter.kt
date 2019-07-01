@@ -1,5 +1,6 @@
 package com.team.dream.cantus.albums.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -32,6 +33,7 @@ class AlbumAdapter : RecyclerView.Adapter<AlbumAdapter.AlbumViewHolder>() {
             if (field.isNullOrEmpty()) {
                 field = value
             } else {
+                if ((field as MutableList).contains(value?.get(0))) return
                 (field as MutableList).addAll(value as MutableList)
             }
             notifyDataSetChanged()

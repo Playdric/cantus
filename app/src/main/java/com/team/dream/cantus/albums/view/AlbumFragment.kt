@@ -1,6 +1,7 @@
 package com.team.dream.cantus.albums.view
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,6 +24,16 @@ class AlbumFragment : Fragment() {
     private lateinit var viewModel: AlbumViewModel
     private lateinit var rcvAlbums: RecyclerView
     private lateinit var lottieAnimation: LottieAnimationView
+
+    private var observer = Observer<List<DeezerAlbum>> {
+        lottieAnimation.visibility = View.GONE
+        lottieAnimation.cancelAnimation()
+        isLoading = false
+        if (!it.isNullOrEmpty()) {
+            updateAlbumList(it)
+        }
+    }
+
     private var adapter = AlbumAdapter()
     private var isLoading = false
     private var currentIndex = 0
@@ -44,14 +55,7 @@ class AlbumFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProviders.of(this).get(AlbumViewModel::class.java)
 
-        viewModel.albumsLiveData.observe(viewLifecycleOwner, Observer {
-            lottieAnimation.visibility = View.GONE
-            lottieAnimation.cancelAnimation()
-            isLoading = false
-            if (!it.isNullOrEmpty()) {
-                updateAlbumList(it)
-            }
-        })
+        viewModel.albumsLiveData.observe(viewLifecycleOwner, observer)
 
         if (currentIndex == 0) {
             isLoading = true
