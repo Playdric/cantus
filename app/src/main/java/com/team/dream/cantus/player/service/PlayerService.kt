@@ -18,6 +18,7 @@ import com.team.dream.cantus.cross.model.DeezerAlbum
 import com.team.dream.cantus.cross.model.DeezerTrack
 import com.team.dream.cantus.cross.rx.RxBus
 import com.team.dream.cantus.cross.rx.RxEvent
+import com.team.dream.cantus.player.view.PlayerActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -171,20 +172,22 @@ class PlayerService() : Service() {
         deleteIntent.action = ACTION_STOP
         val deletePendingIntent = PendingIntent.getForegroundService(applicationContext, 1, deleteIntent, 0)
 
+        val contentIntent = Intent(applicationContext, PlayerActivity::class.java)
+        contentIntent.action = Intent.ACTION_MAIN
+        contentIntent.addCategory(Intent.CATEGORY_LAUNCHER)
+        val contentPendingIntent = PendingIntent.getActivity(applicationContext, 2, contentIntent, 0)
+
         val mediaStyle = androidx.media.app.NotificationCompat.MediaStyle()
             .setMediaSession(mediaSession.sessionToken)
-            .setShowActionsInCompactView(3)
+            .setShowActionsInCompactView(0, 1, 2)
 
         val notification = NotificationCompat.Builder(applicationContext, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle(currentTrack.title)
             .setContentText(album.title)
             .setDeleteIntent(deletePendingIntent)
-            .setStyle(
-                androidx.media.app.NotificationCompat.MediaStyle()
-                    .setMediaSession(mediaSession.sessionToken)
-                    .setShowActionsInCompactView(0, 1, 2)
-            )
+            .setStyle(mediaStyle)
+            .setContentIntent(contentPendingIntent)
             .addAction(generateAction(R.drawable.ic_previous, "previous", ACTION_PREVIOUS))
             .addAction(action)
             .addAction(generateAction(R.drawable.ic_next, "next", ACTION_NEXT))
@@ -252,6 +255,7 @@ class PlayerService() : Service() {
     }
 
     override fun onUnbind(intent: Intent?): Boolean {
+        Log.i(TAG, "onUnbind()")
         mediaSession.release()
         return super.onUnbind(intent)
     }
