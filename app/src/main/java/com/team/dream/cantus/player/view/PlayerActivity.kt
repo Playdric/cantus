@@ -17,6 +17,7 @@ import com.team.dream.cantus.cross.rx.RxBus
 import com.team.dream.cantus.cross.rx.RxEvent
 import com.team.dream.cantus.player.service.PlayerService
 import com.team.dream.cantus.player.viewmodel.PlayerViewModel
+import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -36,13 +37,7 @@ class PlayerActivity : AppCompatActivity() {
         ContextCompat.startForegroundService(this, intent)
     }
 
-    private val onStopPlayingDisposable = RxBus.listenToPublishSubject(RxEvent.EventOnStopPlaying::class.java).subscribe {
-        enableButtons(false)
-        txv_track_artist.text = ""
-        txv_track_title.text = ""
-        imv_album.setImageResource(R.drawable.ic_album_placeholder)
-        btn_play_stop.setImageResource(R.drawable.selector_play)
-    }
+    private lateinit var onStopPlayingDisposable: Disposable
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,6 +47,17 @@ class PlayerActivity : AppCompatActivity() {
         enableButtons(false)
         initObservers()
         setClickListeners()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        onStopPlayingDisposable = RxBus.listenToStopPlaying(RxEvent.EventOnStopPlaying::class.java).subscribe {
+            enableButtons(false)
+            txv_track_artist.text = ""
+            txv_track_title.text = ""
+            imv_album.setImageResource(R.drawable.ic_album_placeholder)
+            btn_play_stop.setImageResource(R.drawable.selector_play)
+        }
     }
 
     override fun onDestroy() {
@@ -77,12 +83,10 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private fun onChangeTrack(track: DeezerTrack) {
-        Log.d("COUCOU", "onChangeTrack ${track.title}")
         txv_track_title.text = track.titleShort
     }
 
     private fun onChangeAlbum(album: DeezerAlbum) {
-        Log.d("COUCOU", "onChangeAlbum ${album.title}")
         Picasso
             .get()
             .load(album.cover_medium)
@@ -93,7 +97,6 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private fun onChangeIsPlaying(isPlaying: Boolean) {
-        Log.d("COUCOU", "onChangeIsPlaying $isPlaying")
         if (isPlaying) {
             enableButtons(true)
             btn_play_stop.setImageResource(R.drawable.selector_pause)

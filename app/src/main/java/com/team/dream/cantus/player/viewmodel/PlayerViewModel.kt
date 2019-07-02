@@ -22,12 +22,9 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
     val toastLiveData: LiveData<Int> = toastMutableLiveData
 
     private val onPlayPauseDisposable = RxBus.listenToPlayPause(RxEvent.EventOnPlayPause::class.java).subscribe {
-        Log.d("COUCOU", "onPlayPauseDisposable: ${it.isPlaying}")
         isPlayingMutableLiveData.value = it.isPlaying
     }
     private val onTrackUpdatedDisposable = RxBus.listenToTrackUpdate(RxEvent.EventOnTrackUpdated::class.java).subscribe {
-        Log.d("COUCOU", "onTrackUpdatedDisposable: ${it.track.title}")
-        Log.d("COUCOU", "onTrackUpdatedDisposable: ${it.album.title}")
         trackMutableLiveData.value = it.track
         albumMutableLiveData.value = it.album
     }

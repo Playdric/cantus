@@ -121,7 +121,7 @@ class PlayerService : Service() {
         mediaController = MediaControllerCompat(applicationContext, mediaSession)
 
         mediaSession.setCallback(object : MediaSessionCompat.Callback() {
-            val TAG = "COUCOU"
+            val TAG = "MediaCallback"
             override fun onPlay() {
                 super.onPlay()
                 mediaPlayer.start()
@@ -151,22 +151,12 @@ class PlayerService : Service() {
                 buildNotification(generateAction(R.drawable.ic_pause, "pause", ACTION_PLAY_PAUSE))
                 Log.i(TAG, "onSkipToPrevious() called")
             }
-
-            override fun onStop() {
-                super.onStop()
-                //TODO cancel notification
-                Log.i(TAG, "onStop() called")
-            }
         })
 
         mediaManager = MediaSessionManager.getSessionManager(applicationContext)
     }
 
     private fun buildNotification(action: NotificationCompat.Action): Notification {
-
-//        val deleteIntent = Intent(applicationContext, PlayerService::class.java)
-//        deleteIntent.action = ACTION_STOP
-//        val deletePendingIntent = PendingIntent.getForegroundService(applicationContext, 1, deleteIntent, PendingIntent.FLAG_CANCEL_CURRENT)
 
         val contentIntent = Intent(applicationContext, PlayerActivity::class.java)
         contentIntent.action = Intent.ACTION_MAIN
@@ -181,7 +171,6 @@ class PlayerService : Service() {
             .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle(currentTrack.title)
             .setContentText(album.title)
-//            .setDeleteIntent(deletePendingIntent)
             .setStyle(mediaStyle)
             .setContentIntent(contentPendingIntent)
             .addAction(generateAction(R.drawable.ic_previous, "previous", ACTION_PREVIOUS))
@@ -279,7 +268,7 @@ class PlayerService : Service() {
     override fun onDestroy() {
         mediaPlayer.stop()
         mediaSession.release()
-        RxBus.publish(RxEvent.EventOnStopPlaying())
+        RxBus.publishStopPlaying(RxEvent.EventOnStopPlaying())
         super.onDestroy()
     }
 
