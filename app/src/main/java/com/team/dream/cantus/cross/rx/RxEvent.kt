@@ -16,6 +16,8 @@ class RxEvent {
 
     data class EventOnPlayError(val t: Throwable, @StringRes val message: Int)
 
+    class EventOnStopPlaying()
+
 //     publish example :
 //     RxBus.publish(RxEvent.EventAddPerson(etPersonName.text.toString()))
 
@@ -25,7 +27,7 @@ class RxEvent {
 //        private lateinit var personDisposable: Disposable
 //
 //        onCreate() {
-//            personDisposable = RxBus.listen(RxEvent.EventAddPerson::class.java).subscribe {
+//            personDisposable = RxBus.listenToPublishSubject(RxEvent.EventAddPerson::class.java).subscribe {
 //                adapter.addPerson(person = it.personName)
 //            }
 //        }

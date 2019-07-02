@@ -1,18 +1,15 @@
 package com.team.dream.cantus.player.service
 
-import android.annotation.TargetApi
 import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.media.MediaPlayer
-import android.os.Build
 import android.os.IBinder
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.media.MediaSessionManager
 import com.squareup.picasso.Picasso
@@ -29,13 +26,14 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 
-class PlayerService() : Service() {
+class PlayerService : Service() {
 
     companion object {
         const val ACTION_PLAY_PAUSE = "ACTION_PLAY_PAUSE"
         const val ACTION_NEXT = "ACTION_NEXT"
         const val ACTION_PREVIOUS = "ACTION_PREVIOUS"
         const val ACTION_STOP = "ACTION_STOP"
+        const val ACTION_CLOSE = "ACTION_CLOSE"
         const val ACTION_SET_TRACKLIST = "ACTION_SET_TRACKLIST"
 
         const val BUNDLE_NAME = "BUNDLE_PLAYER_SERVICE"
@@ -95,6 +93,7 @@ class PlayerService() : Service() {
                 ACTION_PREVIOUS -> mediaController!!.transportControls.skipToPrevious()
                 ACTION_STOP -> mediaController!!.transportControls.stop()
                 ACTION_SET_TRACKLIST -> setTrackList(intent)
+                ACTION_CLOSE -> stopSelf()
             }
         }
     }
@@ -122,11 +121,11 @@ class PlayerService() : Service() {
         mediaController = MediaControllerCompat(applicationContext, mediaSession)
 
         mediaSession.setCallback(object : MediaSessionCompat.Callback() {
-            val TAG = "MediaCallback"
+            val TAG = "COUCOU"
             override fun onPlay() {
                 super.onPlay()
                 mediaPlayer.start()
-                RxBus.publish(RxEvent.EventOnPlayPause(isPlaying = true))
+                RxBus.publishPlayPause(RxEvent.EventOnPlayPause(isPlaying = true))
                 buildNotification(generateAction(R.drawable.ic_pause, "pause", ACTION_PLAY_PAUSE))
                 Log.i(TAG, "onPlay() called")
             }
@@ -134,7 +133,7 @@ class PlayerService() : Service() {
             override fun onPause() {
                 super.onPause()
                 mediaPlayer.pause()
-                RxBus.publish(RxEvent.EventOnPlayPause(isPlaying = false))
+                RxBus.publishPlayPause(RxEvent.EventOnPlayPause(isPlaying = false))
                 buildNotification(generateAction(R.drawable.ic_play, "play", ACTION_PLAY_PAUSE))
                 Log.i(TAG, "onPause() called")
             }
@@ -165,9 +164,9 @@ class PlayerService() : Service() {
 
     private fun buildNotification(action: NotificationCompat.Action): Notification {
 
-        val deleteIntent = Intent(applicationContext, PlayerService::class.java)
-        deleteIntent.action = ACTION_STOP
-        val deletePendingIntent = PendingIntent.getForegroundService(applicationContext, 1, deleteIntent, 0)
+//        val deleteIntent = Intent(applicationContext, PlayerService::class.java)
+//        deleteIntent.action = ACTION_STOP
+//        val deletePendingIntent = PendingIntent.getForegroundService(applicationContext, 1, deleteIntent, PendingIntent.FLAG_CANCEL_CURRENT)
 
         val contentIntent = Intent(applicationContext, PlayerActivity::class.java)
         contentIntent.action = Intent.ACTION_MAIN
@@ -182,12 +181,13 @@ class PlayerService() : Service() {
             .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle(currentTrack.title)
             .setContentText(album.title)
-            .setDeleteIntent(deletePendingIntent)
+//            .setDeleteIntent(deletePendingIntent)
             .setStyle(mediaStyle)
             .setContentIntent(contentPendingIntent)
             .addAction(generateAction(R.drawable.ic_previous, "previous", ACTION_PREVIOUS))
             .addAction(action)
             .addAction(generateAction(R.drawable.ic_next, "next", ACTION_NEXT))
+            .addAction(generateAction(R.drawable.ic_close, "close", ACTION_CLOSE))
 
         bitmapAlbum?.let {
             notification.setLargeIcon(it)
@@ -231,7 +231,7 @@ class PlayerService() : Service() {
 
     private fun updateTrack(track: DeezerTrack) {
         currentTrack = track
-        RxBus.publish(RxEvent.EventOnTrackUpdated(currentTrack, album))
+        RxBus.publishTrackUpdate(RxEvent.EventOnTrackUpdated(currentTrack, album))
         GlobalScope.launch {
             try {
                 mediaPlayer.reset()
@@ -239,7 +239,6 @@ class PlayerService() : Service() {
                 mediaPlayer.prepare()
                 withContext(Dispatchers.Main) {
                     mediaController!!.transportControls.playPause()
-                    //mediaPlayer.start()
                 }
             } catch (err: Exception) {
                 err.printStackTrace()
@@ -255,7 +254,7 @@ class PlayerService() : Service() {
         Picasso
             .get()
             .load(album.cover_medium)
-            .into(object: Target {
+            .into(object : Target {
                 override fun onPrepareLoad(placeHolderDrawable: Drawable?) {
                 }
 
@@ -277,10 +276,11 @@ class PlayerService() : Service() {
         return null
     }
 
-    override fun onUnbind(intent: Intent?): Boolean {
-        Log.i(TAG, "onUnbind()")
+    override fun onDestroy() {
+        mediaPlayer.stop()
         mediaSession.release()
-        return super.onUnbind(intent)
+        RxBus.publish(RxEvent.EventOnStopPlaying())
+        super.onDestroy()
     }
 
     private fun MediaControllerCompat.TransportControls.playPause() {

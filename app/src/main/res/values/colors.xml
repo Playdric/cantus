@@ -13,4 +13,6 @@
     <color name="fragmentBackgroundColor">#EEE</color>
     <color name="separatorColor">#444</color>
     <color name="tracklistUncollapsedToolbar">#9E9E9E</color>
+
+    <color name="btnDisabled">#AAAAAA</color>
 </resources>
