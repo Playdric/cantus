@@ -1,12 +1,14 @@
 package com.team.dream.cantus.player.view
 
 import android.content.Intent
-import android.media.MediaPlayer
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import com.squareup.picasso.Picasso
 import com.team.dream.cantus.R
 import com.team.dream.cantus.cross.model.DeezerAlbum
@@ -15,16 +17,16 @@ import com.team.dream.cantus.cross.rx.RxBus
 import com.team.dream.cantus.cross.rx.RxEvent
 import com.team.dream.cantus.player.service.PlayerService
 import com.team.dream.cantus.player.viewmodel.PlayerViewModel
+import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_main.*
 
 
 class PlayerActivity : AppCompatActivity() {
 
     private lateinit var viewModel: PlayerViewModel
-    private var mediaPlayer = MediaPlayer()
 
-
-    private val onTrackSelectionDisposable = RxBus.listen(RxEvent.EventTrackSelection::class.java).subscribe {
+    private val onTrackSelectionDisposable = RxBus.listenToPublishSubject(RxEvent.EventTrackSelection::class.java).subscribe {
+        enableButtons(true)
         val intent = Intent(this, PlayerService::class.java)
         intent.action = PlayerService.ACTION_SET_TRACKLIST
         val bundle = Bundle()
@@ -35,20 +37,33 @@ class PlayerActivity : AppCompatActivity() {
         ContextCompat.startForegroundService(this, intent)
     }
 
+    private lateinit var onStopPlayingDisposable: Disposable
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        viewModel = PlayerViewModel(application)
-
+        viewModel = ViewModelProviders.of(this, ViewModelProvider.AndroidViewModelFactory(application))
+            .get(PlayerViewModel::class.java)
+        enableButtons(false)
         initObservers()
         setClickListeners()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        onStopPlayingDisposable = RxBus.listenToStopPlaying(RxEvent.EventOnStopPlaying::class.java).subscribe {
+            enableButtons(false)
+            txv_track_artist.text = ""
+            txv_track_title.text = ""
+            imv_album.setImageResource(R.drawable.ic_album_placeholder)
+            btn_play_stop.setImageResource(R.drawable.selector_play)
+        }
     }
 
     override fun onDestroy() {
         viewModel.onDestroy()
         onTrackSelectionDisposable.dispose()
-        val intent = Intent(this, PlayerService::class.java)
-        stopService(intent)
+        onStopPlayingDisposable.dispose()
         super.onDestroy()
     }
 
@@ -83,9 +98,10 @@ class PlayerActivity : AppCompatActivity() {
 
     private fun onChangeIsPlaying(isPlaying: Boolean) {
         if (isPlaying) {
-            btn_play_stop.setImageResource(R.drawable.ic_pause)
+            enableButtons(true)
+            btn_play_stop.setImageResource(R.drawable.selector_pause)
         } else {
-            btn_play_stop.setImageResource(R.drawable.ic_play)
+            btn_play_stop.setImageResource(R.drawable.selector_play)
         }
     }
 
@@ -115,6 +131,15 @@ class PlayerActivity : AppCompatActivity() {
 
     private fun onClickNext() {
         sendIntent(PlayerService.ACTION_NEXT)
+    }
+
+    private fun enableButtons(status: Boolean) {
+        btn_previous.isEnabled = status
+        btn_play_stop.isEnabled = status
+        btn_next.isEnabled = status
+        btn_previous.isClickable = status
+        btn_play_stop.isClickable = status
+        btn_next.isClickable = status
     }
 
     private fun sendIntent(action: String) {
