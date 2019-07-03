@@ -61,6 +61,7 @@ class PlayerService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.i(TAG, "onStartCommand()")
+        RxBus.publishStopPlaying(RxEvent.EventOnStopPlaying(false))
         if (mediaController == null) {
             initMedia()
             createNotificationChannel()
@@ -268,7 +269,7 @@ class PlayerService : Service() {
     override fun onDestroy() {
         mediaPlayer.stop()
         mediaSession.release()
-        RxBus.publishStopPlaying(RxEvent.EventOnStopPlaying())
+        RxBus.publishStopPlaying(RxEvent.EventOnStopPlaying(true))
         super.onDestroy()
     }
 
