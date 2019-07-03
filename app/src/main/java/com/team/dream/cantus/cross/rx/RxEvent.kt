@@ -16,7 +16,7 @@ class RxEvent {
 
     data class EventOnPlayError(val t: Throwable, @StringRes val message: Int)
 
-    class EventOnStopPlaying
+    data class EventOnStopPlaying(val isStopped: Boolean)
 
 //     publish example :
 //     RxBus.publish(RxEvent.EventAddPerson(etPersonName.text.toString()))

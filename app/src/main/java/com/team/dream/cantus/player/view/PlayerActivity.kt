@@ -45,18 +45,20 @@ class PlayerActivity : AppCompatActivity() {
         viewModel = ViewModelProviders.of(this, ViewModelProvider.AndroidViewModelFactory(application))
             .get(PlayerViewModel::class.java)
         enableButtons(false)
-        initObservers()
         setClickListeners()
     }
 
     override fun onResume() {
         super.onResume()
+        initObservers()
         onStopPlayingDisposable = RxBus.listenToStopPlaying(RxEvent.EventOnStopPlaying::class.java).subscribe {
-            enableButtons(false)
-            txv_track_artist.text = ""
-            txv_track_title.text = ""
-            imv_album.setImageResource(R.drawable.ic_album_placeholder)
-            btn_play_stop.setImageResource(R.drawable.selector_play)
+            if (it.isStopped) {
+                enableButtons(false)
+                txv_track_artist.text = ""
+                txv_track_title.text = ""
+                imv_album.setImageResource(R.drawable.ic_album_placeholder)
+                btn_play_stop.setImageResource(R.drawable.selector_play)
+            }
         }
     }
 
