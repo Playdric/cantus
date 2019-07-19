@@ -2,11 +2,9 @@ package com.team.dream.cantus.player.view
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -21,7 +19,6 @@ import com.team.dream.cantus.player.service.PlayerService
 import com.team.dream.cantus.player.viewmodel.PlayerViewModel
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_album.*
 
 
 class PlayerActivity : AppCompatActivity() {
@@ -143,8 +140,8 @@ class PlayerActivity : AppCompatActivity() {
             group_player.visibility = View.VISIBLE
             guideline_player.setGuidelinePercent(0.9f)
         } else {
-            guideline_player.setGuidelinePercent(0.99999f)
             group_player.visibility = View.GONE
+            guideline_player.setGuidelinePercent(0.99999f)
         }
 
     }

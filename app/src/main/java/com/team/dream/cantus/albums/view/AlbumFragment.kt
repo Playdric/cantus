@@ -1,7 +1,6 @@
 package com.team.dream.cantus.albums.view
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -79,15 +78,6 @@ class AlbumFragment : Fragment() {
                     }
         }
         val layoutManager = GridLayoutManager(context, 3)
-        layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
-            override fun getSpanSize(position: Int): Int {
-                return when (adapter.getItemViewType(position)) {
-                    AlbumAdapter.VIEW_TYPE_LOADING -> 3
-                    else -> 1
-                }
-            }
-
-        }
         rcvAlbums.layoutManager = layoutManager
         adapter.setListener(object : AlbumAdapter.ClickListener {
             override fun onClick(album: DeezerAlbum, imageView: AppCompatImageView) {

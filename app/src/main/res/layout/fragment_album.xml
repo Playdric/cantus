@@ -34,11 +34,12 @@
     <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rcv_albums"
             android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginTop="?attr/actionBarSize"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/fragment_album_toolbar"
+            app:layout_constraintTop_toTopOf="parent"
             tools:layoutManager="GridLayoutManager"
             tools:listitem="@layout/item_album"
             tools:spanCount="3"/>
