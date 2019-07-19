@@ -6,4 +6,6 @@
         <item quantity="one">%d track</item>
         <item quantity="other">%d tracks</item>
     </plurals>
+    <string name="nav_album">Albums</string>
+    <string name="nav_search">Search</string>
 </resources>

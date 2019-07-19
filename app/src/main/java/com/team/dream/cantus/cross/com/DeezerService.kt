@@ -19,4 +19,10 @@ interface DeezerService {
     fun getTracksAsync(
             @Path("id") id: Int
     ): Deferred<ApiTrackResponse>
+
+
+    @GET("/search")
+    fun getSearchAsync(
+        @Query("q") search: String
+    ): Deferred<ApiTrackResponse>
 }

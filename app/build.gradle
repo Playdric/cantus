@@ -6,7 +6,7 @@ apply plugin: 'kotlin-android-extensions'
 
 apply plugin: "androidx.navigation.safeargs.kotlin"
 
-ext.navigation_version = '2.1.0-alpha05'
+ext.navigation_version = '2.1.0-alpha06'
 
 android {
     compileSdkVersion 28

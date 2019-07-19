@@ -17,14 +17,19 @@
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+        <action android:id="@+id/action_albumFragment_to_searchFragment" app:destination="@id/searchFragment"/>
     </fragment>
     <fragment
         android:id="@+id/tracklistFragment"
-        android:name="com.team.dream.cantus.tracklist.view.TracklistFragment"
+        android:name="com.team.dream.cantus.tracklist.view.SearchFragment"
         android:label="TracklistFragment"
         tools:layout="@layout/fragment_tracklist">
         <argument
             android:name="album"
             app:argType="com.team.dream.cantus.cross.model.DeezerAlbum" />
+        <action android:id="@+id/action_tracklistFragment_to_searchFragment" app:destination="@id/searchFragment"/>
     </fragment>
+    <fragment android:id="@+id/searchFragment" android:name="com.team.dream.cantus.tracklist.view.SearchFragment"
+              android:label="SearchFragment"
+              tools:layout="@layout/fragment_tracklist"/>
 </navigation>

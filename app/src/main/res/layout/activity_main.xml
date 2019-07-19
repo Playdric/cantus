@@ -1,91 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".player.view.PlayerActivity">
+                                                   xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                   xmlns:tools="http://schemas.android.com/tools"
+                                                   android:layout_width="match_parent"
+                                                   android:layout_height="match_parent"
+                                                   tools:context=".player.view.PlayerActivity">
 
     <fragment
-        android:id="@+id/fragment_container"
-        android:name="androidx.navigation.fragment.NavHostFragment"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:defaultNavHost="true"
-        app:layout_constraintBottom_toTopOf="@id/guideline2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:navGraph="@navigation/nav_graph" />
+            android:id="@+id/fragment_container"
+            android:name="androidx.navigation.fragment.NavHostFragment"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:defaultNavHost="true"
+            app:layout_constraintBottom_toTopOf="@id/guideline2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:navGraph="@navigation/nav_graph"/>
 
     <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/imv_album"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="@dimen/margin_small"
-        android:src="@drawable/ic_album_placeholder"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/guideline2" />
+            android:id="@+id/imv_album"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="@dimen/margin_small"
+            android:src="@drawable/ic_album_placeholder"
+            app:layout_constraintBottom_toTopOf="@id/main_navigation_view"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/guideline2"/>
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/txv_track_title"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:textAlignment="center"
-        app:layout_constraintBottom_toTopOf="@id/txv_track_artist"
-        app:layout_constraintEnd_toStartOf="@id/btn_previous"
-        app:layout_constraintStart_toEndOf="@id/imv_album"
-        app:layout_constraintTop_toBottomOf="@id/guideline2"
-        tools:text="Title here" />
+            android:id="@+id/txv_track_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            app:layout_constraintBottom_toTopOf="@id/txv_track_artist"
+            app:layout_constraintEnd_toStartOf="@id/btn_previous"
+            app:layout_constraintStart_toEndOf="@id/imv_album"
+            app:layout_constraintTop_toBottomOf="@id/guideline2"
+            tools:text="Title here"/>
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/txv_track_artist"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:textAlignment="center"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/btn_previous"
-        app:layout_constraintStart_toEndOf="@id/imv_album"
-        app:layout_constraintTop_toBottomOf="@id/txv_track_title"
-        tools:text="Artist here" />
+            android:id="@+id/txv_track_artist"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            app:layout_constraintBottom_toTopOf="@id/main_navigation_view"
+            app:layout_constraintEnd_toStartOf="@id/btn_previous"
+            app:layout_constraintStart_toEndOf="@id/imv_album"
+            app:layout_constraintTop_toBottomOf="@id/txv_track_title"
+            tools:text="Artist here"/>
 
     <androidx.appcompat.widget.AppCompatImageButton
-        android:id="@+id/btn_previous"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:src="@drawable/selector_previous"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintDimensionRatio="0.7:1"
-        app:layout_constraintEnd_toStartOf="@id/btn_play_stop"
-        app:layout_constraintTop_toBottomOf="@id/guideline2" />
+            android:id="@+id/btn_previous"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:src="@drawable/selector_previous"
+            app:layout_constraintBottom_toTopOf="@id/main_navigation_view"
+            app:layout_constraintDimensionRatio="0.7:1"
+            app:layout_constraintEnd_toStartOf="@id/btn_play_stop"
+            app:layout_constraintTop_toBottomOf="@id/guideline2"/>
 
     <androidx.appcompat.widget.AppCompatImageButton
-        android:id="@+id/btn_play_stop"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:src="@drawable/selector_play"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintDimensionRatio="0.7:1"
-        app:layout_constraintEnd_toStartOf="@id/btn_next"
-        app:layout_constraintTop_toBottomOf="@id/guideline2" />
+            android:id="@+id/btn_play_stop"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:src="@drawable/selector_play"
+            app:layout_constraintBottom_toTopOf="@id/main_navigation_view"
+            app:layout_constraintDimensionRatio="0.7:1"
+            app:layout_constraintEnd_toStartOf="@id/btn_next"
+            app:layout_constraintTop_toBottomOf="@id/guideline2"/>
 
     <androidx.appcompat.widget.AppCompatImageButton
-        android:id="@+id/btn_next"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:src="@drawable/selector_next"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintDimensionRatio="0.7:1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/guideline2" />
+            android:id="@+id/btn_next"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:src="@drawable/selector_next"
+            app:layout_constraintBottom_toTopOf="@id/main_navigation_view"
+            app:layout_constraintDimensionRatio="0.7:1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/guideline2"/>
+
+    <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/separatorColor"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/main_navigation_view"/>
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintGuide_percent="0.9" />
+            android:id="@+id/guideline2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintGuide_percent=".82"/>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/main_navigation_view"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/navigation_view_height"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:menu="@menu/navigation_items" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
