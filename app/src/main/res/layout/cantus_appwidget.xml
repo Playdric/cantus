@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:background="@color/secondaryColor"
+        android:layout_height="match_parent" xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ImageView
+            android:id="@+id/appwidget_imv_album_cover"
+            android:layout_width="@dimen/widget_imv_size"
+            android:layout_height="@dimen/widget_imv_size"
+            android:layout_margin="@dimen/margin_small"
+            tools:srcCompat="@tools:sample/avatars"/>
+
+    <TextView
+            android:id="@+id/appwidget_txv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/appwidget_imv_album_cover"
+            android:layout_margin="@dimen/margin_small"
+            tools:text="Le titre de la piste"/>
+
+    <TextView
+            android:id="@+id/appwidget_txv_album"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/appwidget_imv_album_cover"
+            android:layout_below="@id/appwidget_txv_title"
+            android:layout_margin="@dimen/margin_small"
+            tools:text="L'album"/>
+
+    <ImageButton
+            android:id="@+id/appwidget_btn_previous"
+            android:layout_width="@dimen/widget_imv_size"
+            android:layout_height="40dp"
+            android:layout_marginTop="@dimen/margin_small"
+            android:layout_marginBottom="@dimen/margin_small"
+            android:layout_toStartOf="@id/appwidget_btn_play_stop"
+            android:layout_alignParentBottom="true"
+            android:src="@drawable/selector_previous"/>
+
+    <ImageButton
+            android:id="@+id/appwidget_btn_play_stop"
+            android:layout_width="@dimen/widget_imv_size"
+            android:layout_height="40dp"
+            android:layout_marginTop="@dimen/margin_small"
+            android:layout_marginBottom="@dimen/margin_small"
+            android:layout_toStartOf="@id/appwidget_btn_next"
+            android:layout_alignParentBottom="true"
+            android:src="@drawable/selector_play"/>
+
+    <ImageButton
+            android:id="@+id/appwidget_btn_next"
+            android:layout_width="@dimen/widget_imv_size"
+            android:layout_height="40dp"
+            android:layout_marginTop="@dimen/margin_small"
+            android:layout_marginBottom="@dimen/margin_small"
+            android:layout_marginEnd="@dimen/margin_small"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:src="@drawable/selector_next"/>
+
+
+</RelativeLayout>

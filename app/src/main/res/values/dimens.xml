@@ -8,4 +8,6 @@
     <dimen name="separator_margin">64dp</dimen>
 
     <dimen name="music_note_size">48dp</dimen>
+
+    <dimen name="widget_imv_size">60dp</dimen>
 </resources>

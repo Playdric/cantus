@@ -1,6 +1,8 @@
 package com.team.dream.cantus.player.service
 
 import android.app.*
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -14,12 +16,12 @@ import androidx.core.app.NotificationCompat
 import androidx.media.MediaSessionManager
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Target
-import com.team.dream.cantus.R
 import com.team.dream.cantus.cross.model.DeezerAlbum
 import com.team.dream.cantus.cross.model.DeezerTrack
 import com.team.dream.cantus.cross.rx.RxBus
 import com.team.dream.cantus.cross.rx.RxEvent
 import com.team.dream.cantus.player.view.PlayerActivity
+import com.team.dream.cantus.widget.provider.CantusAppWidgetProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -62,6 +64,7 @@ class PlayerService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.i(TAG, "onStartCommand()")
         RxBus.publishStopPlaying(RxEvent.EventOnStopPlaying(false))
+        sendIntentToWidget(isPlaying = false)
         if (mediaController == null) {
             initMedia()
             createNotificationChannel()
@@ -104,7 +107,8 @@ class PlayerService : Service() {
         currentTrack = bundle.getParcelable(BUNDLE_KEY_CURR_TRACK)
         album = bundle.getParcelable(BUNDLE_KEY_ALBUM)
         tracklist = bundle.getParcelableArrayList(BUNDLE_KEY_TRACKLIST)
-        val notification = buildNotification(generateAction(R.drawable.ic_pause, "pause", ACTION_PLAY_PAUSE))
+        val notification =
+            buildNotification(generateAction(com.team.dream.cantus.R.drawable.ic_pause, "pause", ACTION_PLAY_PAUSE))
         startForeground(1, notification)
         updateTrack(currentTrack)
         downloadBitmap()
@@ -127,7 +131,8 @@ class PlayerService : Service() {
                 super.onPlay()
                 mediaPlayer.start()
                 RxBus.publishPlayPause(RxEvent.EventOnPlayPause(isPlaying = true))
-                buildNotification(generateAction(R.drawable.ic_pause, "pause", ACTION_PLAY_PAUSE))
+                sendIntentToWidget(isPlaying = true)
+                buildNotification(generateAction(com.team.dream.cantus.R.drawable.ic_pause, "pause", ACTION_PLAY_PAUSE))
                 Log.i(TAG, "onPlay() called")
             }
 
@@ -135,21 +140,22 @@ class PlayerService : Service() {
                 super.onPause()
                 mediaPlayer.pause()
                 RxBus.publishPlayPause(RxEvent.EventOnPlayPause(isPlaying = false))
-                buildNotification(generateAction(R.drawable.ic_play, "play", ACTION_PLAY_PAUSE))
+                sendIntentToWidget(isPlaying = false)
+                buildNotification(generateAction(com.team.dream.cantus.R.drawable.ic_play, "play", ACTION_PLAY_PAUSE))
                 Log.i(TAG, "onPause() called")
             }
 
             override fun onSkipToNext() {
                 super.onSkipToNext()
                 getNext()
-                buildNotification(generateAction(R.drawable.ic_pause, "pause", ACTION_PLAY_PAUSE))
+                buildNotification(generateAction(com.team.dream.cantus.R.drawable.ic_pause, "pause", ACTION_PLAY_PAUSE))
                 Log.i(TAG, "onSkipToNext() called")
             }
 
             override fun onSkipToPrevious() {
                 super.onSkipToPrevious()
                 getPrevious()
-                buildNotification(generateAction(R.drawable.ic_pause, "pause", ACTION_PLAY_PAUSE))
+                buildNotification(generateAction(com.team.dream.cantus.R.drawable.ic_pause, "pause", ACTION_PLAY_PAUSE))
                 Log.i(TAG, "onSkipToPrevious() called")
             }
         })
@@ -169,15 +175,15 @@ class PlayerService : Service() {
             .setShowActionsInCompactView(0, 1, 2)
 
         val notification = NotificationCompat.Builder(applicationContext, CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_notification)
+            .setSmallIcon(com.team.dream.cantus.R.drawable.ic_notification)
             .setContentTitle(currentTrack.title)
             .setContentText(album.title)
             .setStyle(mediaStyle)
             .setContentIntent(contentPendingIntent)
-            .addAction(generateAction(R.drawable.ic_previous, "previous", ACTION_PREVIOUS))
+            .addAction(generateAction(com.team.dream.cantus.R.drawable.ic_previous, "previous", ACTION_PREVIOUS))
             .addAction(action)
-            .addAction(generateAction(R.drawable.ic_next, "next", ACTION_NEXT))
-            .addAction(generateAction(R.drawable.ic_close, "close", ACTION_CLOSE))
+            .addAction(generateAction(com.team.dream.cantus.R.drawable.ic_next, "next", ACTION_NEXT))
+            .addAction(generateAction(com.team.dream.cantus.R.drawable.ic_close, "close", ACTION_CLOSE))
 
         bitmapAlbum?.let {
             notification.setLargeIcon(it)
@@ -222,6 +228,10 @@ class PlayerService : Service() {
     private fun updateTrack(track: DeezerTrack) {
         currentTrack = track
         RxBus.publishTrackUpdate(RxEvent.EventOnTrackUpdated(currentTrack, album))
+        sendIntentToWidget(
+            imgAlbum = album.cover_medium,
+            albumTitle = album.title,
+            trackTitle = currentTrack.title)
         GlobalScope.launch {
             try {
                 mediaPlayer.reset()
@@ -233,7 +243,7 @@ class PlayerService : Service() {
             } catch (err: Exception) {
                 err.printStackTrace()
                 withContext(Dispatchers.Main) {
-                    RxBus.publish(RxEvent.EventOnPlayError(err, R.string.error_reading_track))
+                    RxBus.publish(RxEvent.EventOnPlayError(err, com.team.dream.cantus.R.string.error_reading_track))
                 }
             }
         }
@@ -254,9 +264,21 @@ class PlayerService : Service() {
                 override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
                     bitmapAlbum = bitmap
                     if (mediaPlayer.isPlaying)
-                        buildNotification(generateAction(R.drawable.ic_pause, "pause", ACTION_PLAY_PAUSE))
+                        buildNotification(
+                            generateAction(
+                                com.team.dream.cantus.R.drawable.ic_pause,
+                                "pause",
+                                ACTION_PLAY_PAUSE
+                            )
+                        )
                     else
-                        buildNotification(generateAction(R.drawable.ic_play, "play", ACTION_PLAY_PAUSE))
+                        buildNotification(
+                            generateAction(
+                                com.team.dream.cantus.R.drawable.ic_play,
+                                "play",
+                                ACTION_PLAY_PAUSE
+                            )
+                        )
                 }
 
             })
@@ -270,6 +292,7 @@ class PlayerService : Service() {
         mediaPlayer.stop()
         mediaSession.release()
         RxBus.publishStopPlaying(RxEvent.EventOnStopPlaying(true))
+        sendIntentToWidget(isPlaying = false)
         super.onDestroy()
     }
 
@@ -278,5 +301,32 @@ class PlayerService : Service() {
             pause()
         else
             play()
+    }
+
+    private fun sendIntentToWidget(
+        isPlaying: Boolean? = null,
+        imgAlbum: String? = null,
+        albumTitle: String? = null,
+        trackTitle: String? = null
+    ) {
+        val intent = Intent(this, CantusAppWidgetProvider::class.java)
+        intent.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
+        val ids = AppWidgetManager.getInstance(application)
+            .getAppWidgetIds(ComponentName(application, CantusAppWidgetProvider::class.java))
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids)
+
+        isPlaying?.let {
+            intent.putExtra(CantusAppWidgetProvider.INTENT_EXTRA_IS_PLAYING, it)
+        }
+        imgAlbum?.let {
+            intent.putExtra(CantusAppWidgetProvider.INTENT_EXTRA_IMG_ALBUM, it)
+        }
+        albumTitle?.let {
+            intent.putExtra(CantusAppWidgetProvider.INTENT_EXTRA_ALBUM_TITLE, it)
+        }
+        trackTitle?.let {
+            intent.putExtra(CantusAppWidgetProvider.INTENT_EXTRA_TRACK_TITLE, it)
+        }
+        sendBroadcast(intent)
     }
 }
